@@ -1,7 +1,7 @@
 # Hoja de ruta por fases
 
-**Estado:** Propuesta  
-**Versión:** 0.1  
+**Estado:** Vigente
+**Versión:** 0.2
 **Fecha:** 2026-08-12
 
 ## Principio de avance
@@ -42,7 +42,7 @@ Entregables:
 - migraciones iniciales;
 - configuración por ambiente y `.env.example`;
 - health checks, logs estructurados y correlation IDs;
-- CI mínima con lint, tipos, pruebas y build de imágenes;
+- flujo manual de ramas cortas con lint, formato, pruebas y build de imágenes como puerta obligatoria;
 - cliente Tauri mínimo capaz de consultar el health de la API.
 
 Puerta de salida:
@@ -50,7 +50,10 @@ Puerta de salida:
 - entorno se inicia desde cero siguiendo README;
 - ningún servicio interno queda publicado innecesariamente;
 - pruebas y escaneos base pasan;
+- cada incremento fue validado antes del merge y etiquetado después de su aprobación;
 - reinicios controlados no corrompen persistencia.
+
+GitHub Actions queda aplazado por decisión del propietario mientras adquiere experiencia con la herramienta. Su adopción futura se tratará como un incremento explícito; no será una modificación incidental del proceso.
 
 ## Fase 2 — Identidad y autorización
 

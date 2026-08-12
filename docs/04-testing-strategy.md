@@ -1,7 +1,7 @@
 # Estrategia de pruebas
 
-**Estado:** Borrador inicial  
-**Versión:** 0.1  
+**Estado:** Vigente
+**Versión:** 0.2
 **Fecha:** 2026-08-12
 
 ## 1. Objetivo
@@ -88,9 +88,13 @@ La aceptación manual inicial debe incluir reproductores representativos de Wind
 - Pruebas de rutas largas, Unicode, colisiones, archivo existente y disco sin permisos.
 - Verificación de que cerrar sesión elimina credenciales locales sin borrar la biblioteca por accidente.
 
-## 8. Automatización CI propuesta
+## 8. Ejecución actual y automatización futura
 
-Cuando exista código, cada Pull Request ejecutará como mínimo:
+Durante la etapa personal inicial, cada rama se validará manualmente antes del merge siguiendo el flujo documentado en [Flujo manual de control de versiones](10-manual-version-control-workflow.md). Un cambio que afecte al backend, contenedores, dependencias o migraciones debe ejecutar `scripts/verify.ps1` y conservar el resultado en la revisión del incremento.
+
+GitHub Actions queda aplazado hasta que el propietario decida abordarlo como un incremento de aprendizaje independiente. Las ramas no sustituyen las pruebas: la puerta manual es obligatoria mientras no exista automatización remota.
+
+Una futura integración continua debería ejecutar como mínimo:
 
 1. formato, lint y compilación/tipos;
 2. unitarias;
@@ -121,8 +125,8 @@ Se creará una matriz de trazabilidad, por ejemplo:
 
 | Requisito | Prueba | Tipo | Evidencia |
 |---|---|---|---|
-| RF-003 | `cannot_read_another_users_job` | API/seguridad | Reporte CI |
-| RF-024 | `expired_lease_is_reclaimed_once` | Integración/recuperación | Reporte CI |
+| RF-003 | `cannot_read_another_users_job` | API/seguridad | Reporte de pruebas |
+| RF-024 | `expired_lease_is_reclaimed_once` | Integración/recuperación | Reporte de pruebas |
 | RF-033 | `rejects_invalid_output` | Integración multimedia | Log de prueba + fixture |
 
 La tabla completa aparecerá al iniciar la implementación y se mantendrá junto al código.

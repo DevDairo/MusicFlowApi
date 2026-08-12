@@ -1,7 +1,7 @@
 # Proceso de desarrollo
 
-**Estado:** Propuesta  
-**Versión:** 0.1  
+**Estado:** Vigente
+**Versión:** 0.2
 **Fecha:** 2026-08-12
 
 ## 1. Ciclo de vida
@@ -55,28 +55,31 @@ Una tarea está terminada cuando:
 - entradas, permisos, secretos y errores fueron revisados;
 - logs y métricas permiten diagnosticar el comportamiento relevante;
 - contratos, migraciones y documentación están actualizados;
-- CI pasa sin ignorar fallos;
+- la puerta de calidad manual o automatizada vigente pasa sin ignorar fallos;
 - no deja defectos críticos o importantes conocidos sin decisión explícita;
 - se puede desplegar y revertir o recuperar de manera documentada.
 
 ## 5. Gestión del repositorio
 
-La estrategia exacta se confirmará al inicializar Git. Recomendación inicial:
+La estrategia vigente está definida en [Flujo manual de control de versiones](10-manual-version-control-workflow.md). Sus reglas principales son:
 
-- rama principal protegida;
-- ramas de vida corta;
+- `main` representa siempre el último estado aprobado;
+- ramas cortas por incremento o módulo, no ramas de larga duración por fase completa;
 - commits pequeños y coherentes;
 - Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`);
-- Pull Request con requisito, cambio, evidencia de pruebas, riesgos y rollback;
+- merge solo después de ejecutar y registrar la puerta de calidad aplicable;
+- etiqueta anotada para cada incremento aprobado;
+- Pull Request recomendado como registro de revisión, aunque no ejecute GitHub Actions;
 - revisión obligatoria para cambios de autenticación, autorización, migraciones, ejecución de procesos o despliegue.
 
 No se mezclarán refactors grandes con cambios funcionales sin una razón documentada.
+No se utilizará `--force` sobre `main`. Una regresión publicada se corregirá con `git revert` para conservar trazabilidad.
 
 ## 6. Versionado y contratos
 
 - Versionado semántico cuando existan releases consumibles.
 - API bajo `/v1`; una versión nueva solo para cambios incompatibles.
-- OpenAPI será contrato ejecutable y se comprobará en CI.
+- OpenAPI será contrato ejecutable y se comprobará en la puerta de calidad vigente.
 - Migraciones de base de datos serán incrementales y no se editarán después de publicarse.
 - Los cambios compatibles se prefieren a despliegues coordinados frágiles.
 - El cliente debe manejar que el servidor tenga una versión compatible distinta.

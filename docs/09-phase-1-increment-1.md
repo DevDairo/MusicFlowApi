@@ -1,7 +1,7 @@
 # Fase 1 — incremento 1: esqueleto técnico
 
-**Estado:** Aprobado y cerrado  
-**Versión:** 1.0  
+**Estado:** Aprobado y cerrado
+**Versión:** 1.0
 **Inicio:** 2026-08-12
 **Cierre:** 2026-08-12
 
@@ -130,7 +130,7 @@ No quedan defectos bloqueantes conocidos en este incremento. Existe una adverten
 
 ## Decisión de cierre
 
-El incremento 1 de la Fase 1 queda aprobado. La Fase 1 completa permanece abierta porque aún requiere la CI mínima y el cliente Tauri mínimo establecidos en la hoja de ruta. El siguiente incremento debe definirse y aprobarse antes de implementar nuevas capacidades.
+El incremento 1 de la Fase 1 queda aprobado y etiquetado como `phase-1-increment-1`. La exigencia inmediata de CI fue reemplazada por una puerta manual reproducible, documentada y aprobada por el propietario. La Fase 1 completa permanece abierta porque aún requiere el cliente Tauri mínimo establecido en la hoja de ruta. El siguiente incremento debe definirse y aprobarse antes de implementar nuevas capacidades.
 
 ## Referencias
 

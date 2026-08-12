@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 1 aprobado**  
-> Versión documental: **0.3.0**  
+> Estado: **Fase 1 — incremento 1 aprobado**
+> Versión documental: **0.4.0**
 > Fecha de referencia: **2026-08-12**
 
 ## Propósito
@@ -38,6 +38,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Diagnóstico del beta](docs/07-beta-diagnostic.md) | Hallazgos del código inicial y estrategia de migración. |
 | [Revisión de salida de Fase 0](docs/08-phase-0-exit-review.md) | Evidencia de aprobación y cierre de la fase. |
 | [Fase 1 — incremento 1](docs/09-phase-1-increment-1.md) | Alcance, verificaciones y evidencia del esqueleto técnico. |
+| [Flujo manual de control de versiones](docs/10-manual-version-control-workflow.md) | Ramas, validación, merge, etiquetas y recuperación. |
 | [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
 
 ## Decisiones iniciales
@@ -52,7 +53,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El incremento demuestra un esqueleto reproducible de API, worker y PostgreSQL mediante Docker Compose. La Fase 1 continúa abierta: todavía debe incorporar CI mínima y un cliente Tauri mínimo. Aún no incluye autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El incremento demuestra un esqueleto reproducible de API, worker y PostgreSQL mediante Docker Compose. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. La Fase 1 continúa abierta por el cliente Tauri mínimo. Aún no incluye autenticación, trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 
