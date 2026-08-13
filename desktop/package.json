@@ -1,0 +1,34 @@
+{
+  "name": "musicflow-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.15.1",
+  "engines": {
+    "node": ">=24.17.0 <25"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite",
+    "format:check": "prettier --check .",
+    "lint": "oxlint --deny-warnings src vite.config.ts",
+    "test": "vitest run",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "oxlint": "1.73.0",
+    "prettier": "3.9.5",
+    "typescript": "6.0.2",
+    "vite": "8.1.5",
+    "vitest": "4.1.1"
+  }
+}

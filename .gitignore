@@ -22,7 +22,7 @@ build/
 artifacts/
 tmp/
 
-# Tauri / Node (future phases)
+# Tauri / Node
 node_modules/
 target/
 src-tauri/target/

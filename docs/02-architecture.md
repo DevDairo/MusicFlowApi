@@ -212,4 +212,4 @@ Tauri usará Rust en la capa nativa y React + TypeScript en la UI. La frontera H
 1. Proveedor OIDC.
 2. Parámetros finales del perfil MP3 y matriz de compatibilidad.
 3. Retención, cuotas y límites de concurrencia.
-4. Estrategia de toolchain y empaquetado Tauri sin instalaciones globales en Windows.
+4. Firma de código y estrategia de compilación nativa para versiones públicas de Windows.
