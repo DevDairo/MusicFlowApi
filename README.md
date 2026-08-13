@@ -2,7 +2,7 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 2 en validación**
+> Estado: **Fase 1 — incremento 2 aprobado**
 > Versión documental: **0.5.0**
 > Fecha de referencia: **2026-08-13**
 
@@ -54,7 +54,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El segundo incremento se encuentra en validación y añade un cliente Tauri mínimo compilado mediante un contenedor desechable; Docker no forma parte del runtime del cliente. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El segundo incremento fue aprobado el 2026-08-13: añade un cliente Tauri mínimo compilado mediante un contenedor desechable y validado mediante instalación, reapertura y desinstalación manuales; Docker no forma parte del runtime del cliente. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 

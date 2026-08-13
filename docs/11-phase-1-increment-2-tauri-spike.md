@@ -1,6 +1,6 @@
 # Fase 1 — incremento 2: spike del cliente Tauri
 
-**Estado:** En validación
+**Estado:** Aprobado
 
 **Versión:** 0.1
 
@@ -97,9 +97,9 @@ La primera ejecución puede tardar y descargar varios gigabytes. Los artefactos 
 - [x] Vite produce el frontend de release.
 - [x] Rust supera `cargo fmt --check`.
 - [x] `cargo-xwin` produce exactamente un `*-setup.exe` NSIS.
-- [ ] El instalador se ejecuta para el usuario actual sin pedir permisos administrativos.
-- [ ] La aplicación abre, presenta la pantalla de la puerta A y cierra correctamente.
-- [ ] La desinstalación no afecta datos ajenos ni servicios del backend.
+- [x] El instalador se ejecuta para el usuario actual sin pedir permisos administrativos.
+- [x] La aplicación abre, presenta la pantalla de la puerta A y cierra correctamente.
+- [x] La desinstalación no afecta datos ajenos ni servicios del backend.
 
 ## 8. Evidencia
 
@@ -109,12 +109,12 @@ La primera ejecución puede tardar y descargar varios gigabytes. Los artefactos 
 | Regresión del backend | Aprobada el 2026-08-13 | Lint, formato, migración, 10 pruebas automatizadas y health checks de API, worker y PostgreSQL finalizaron correctamente mediante `verify.ps1`. |
 | Instalador NSIS | Aprobado el 2026-08-13 | `artifacts/desktop-20260813-083106/MusicFlow_0.1.0_x64-setup.exe`; 1 983 384 bytes; SHA-256 `AB3DDBCF13A9DBB4E5D66C22122A27A65205FA33121453CDF356B247784CC3B8`. |
 | Firma del artefacto | Esperada para desarrollo | PowerShell informa `NotSigned`. La firma de código permanece fuera del alcance hasta preparar la distribución pública. |
-| Instalación y apertura en Windows | Pendiente | Confirmación manual del propietario. |
-| Desinstalación | Pendiente | Confirmación manual del propietario. |
+| Instalación y apertura en Windows | Aprobada el 2026-08-13 | El propietario confirmó instalación sin elevación, primera apertura mediante captura, cierre y reapertura correctos. |
+| Desinstalación | Aprobada el 2026-08-13 | El propietario confirmó la desinstalación correcta y sin afectar los servicios independientes del backend. |
 
 Durante la primera construcción se detectaron y resolvieron tres defectos aislados del toolchain: ausencia del componente `rustfmt`, envío incorrecto de `--locked` a Tauri en lugar del runner y ausencia del recurso `icon.ico`. El SVG fuente ahora se conserva en el repositorio y Tauri deriva los recursos de plataforma dentro de Docker.
 
-Este documento no se marcará como aprobado ni se realizará merge hasta completar la evidencia.
+La puerta A y el incremento 2 quedan aprobados el 2026-08-13. El merge se realizará mediante el flujo manual de control de versiones después de guardar esta evidencia.
 
 ## 9. Recuperación
 
