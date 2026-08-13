@@ -24,6 +24,7 @@ $verifierClientId = "musicflow-identity-verifier"
 $previousAdminPort = $env:KEYCLOAK_ADMIN_PORT
 $previousGatewayPort = $env:KEYCLOAK_GATEWAY_PORT
 $previousHostnameUrl = $env:KEYCLOAK_HOSTNAME_URL
+$previousProxySubnet = $env:KEYCLOAK_PROXY_SUBNET
 
 if ($Fresh) {
     if ($KeepRunning) {
@@ -42,6 +43,8 @@ if ($Fresh) {
     if ($ProjectName -notmatch '^musicflow-identity-verify(?:-[a-z0-9-]+)?$') {
         throw "-Fresh solo admite proyectos temporales con prefijo musicflow-identity-verify."
     }
+
+    $env:KEYCLOAK_PROXY_SUBNET = "172.30.54.0/29"
 }
 
 if ($AdminPort -eq $GatewayPort) {
@@ -53,11 +56,24 @@ if ([string]::IsNullOrWhiteSpace($adminUsername)) {
 
 $env:KEYCLOAK_ADMIN_PORT = [string]$AdminPort
 $env:KEYCLOAK_GATEWAY_PORT = [string]$GatewayPort
-$env:KEYCLOAK_HOSTNAME_URL = "http://127.0.0.1:$AdminPort"
-
-$expectedIssuer = "http://127.0.0.1:$AdminPort/realms/musicflow"
 $adminBaseUrl = "http://127.0.0.1:$AdminPort"
 $gatewayBaseUrl = "http://127.0.0.1:$GatewayPort"
+
+if ($Fresh) {
+    $env:KEYCLOAK_HOSTNAME_URL = $adminBaseUrl
+}
+else {
+    $hostnameLine = @(
+        Get-Content -LiteralPath $envFile |
+            Where-Object { $_ -match '^\s*KEYCLOAK_HOSTNAME_URL\s*=' }
+    ) | Select-Object -Last 1
+    if (-not $hostnameLine) {
+        throw "Falta KEYCLOAK_HOSTNAME_URL en .env."
+    }
+    $env:KEYCLOAK_HOSTNAME_URL = ($hostnameLine -split '=', 2)[1].Trim()
+}
+
+$expectedIssuer = "$($env:KEYCLOAK_HOSTNAME_URL.TrimEnd('/'))/realms/musicflow"
 
 function Resolve-DockerExecutable {
     $dockerCommand = Get-Command docker -ErrorAction SilentlyContinue
@@ -229,7 +245,7 @@ function Test-IdentityContract {
         -TimeoutSec 10
     Assert-True -Condition ($jwks.keys.Count -gt 0) -Message "JWKS no contiene claves de firma."
 
-    Assert-Equal (Get-HttpStatusCode "$script:gatewayBaseUrl/gateway-health") 204 "Gateway no esta sano."
+    Assert-Equal (Get-HttpStatusCode "$script:adminBaseUrl/gateway-health") 204 "Gateway no esta sano."
 
     foreach ($deniedPath in @("/", "/admin/", "/realms/master/", "/health", "/metrics")) {
         Assert-Equal `
@@ -367,11 +383,30 @@ try {
         -Condition ([bool]$composeConfiguration.networks.'identity-backend'.internal) `
         -Message "La red de datos de identidad debe permanecer interna."
 
-    foreach ($serviceName in @("keycloak", "keycloak-gateway")) {
-        $service = $composeConfiguration.services.$serviceName
-        Assert-Equal $service.ports.Count 1 "$serviceName debe publicar exactamente un puerto."
-        Assert-Equal $service.ports[0].host_ip "127.0.0.1" "$serviceName solo debe enlazarse a loopback."
+    Assert-True `
+        -Condition (-not ($composeConfiguration.services.keycloak.PSObject.Properties.Name -contains "ports")) `
+        -Message "Keycloak no debe publicar puertos directamente."
+
+    $gatewayPorts = @($composeConfiguration.services.'keycloak-gateway'.ports)
+    Assert-Equal $gatewayPorts.Count 2 "El gateway debe publicar las puertas OIDC y administrativa."
+    foreach ($gatewayPortBinding in $gatewayPorts) {
+        Assert-Equal $gatewayPortBinding.host_ip "127.0.0.1" "Las puertas locales deben ligarse a loopback."
     }
+
+    Assert-True `
+        -Condition ([bool]$composeConfiguration.networks.'identity-proxy'.internal) `
+        -Message "La red entre el gateway y Keycloak debe permanecer interna."
+    Assert-Equal `
+        $composeConfiguration.services.keycloak.environment.KC_PROXY_HEADERS `
+        "xforwarded" `
+        "Keycloak debe interpretar solo X-Forwarded sobrescritos por el gateway."
+    Assert-Equal `
+        $composeConfiguration.services.keycloak.environment.KC_PROXY_TRUSTED_ADDRESSES `
+        $composeConfiguration.networks.'identity-proxy'.ipam.config[0].subnet `
+        "Keycloak solo debe confiar en la subred interna del proxy."
+    Assert-True `
+        -Condition (-not ($composeConfiguration.services.keycloak.networks.PSObject.Properties.Name -contains "identity-ingress")) `
+        -Message "Keycloak no debe ser alcanzable directamente desde la red de ingreso."
 
     Invoke-Compose build keycloak
     Invoke-Compose up --detach --wait keycloak-gateway
@@ -417,6 +452,7 @@ finally {
         $env:KEYCLOAK_ADMIN_PORT = $previousAdminPort
         $env:KEYCLOAK_GATEWAY_PORT = $previousGatewayPort
         $env:KEYCLOAK_HOSTNAME_URL = $previousHostnameUrl
+        $env:KEYCLOAK_PROXY_SUBNET = $previousProxySubnet
         Pop-Location -ErrorAction SilentlyContinue
     }
 }

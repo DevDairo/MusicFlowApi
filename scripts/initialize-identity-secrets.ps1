@@ -31,7 +31,8 @@ $secretFiles = @(
     "keycloak-db-password",
     "keycloak-bootstrap-admin-password",
     "keycloak-admin-password",
-    "keycloak-verifier-client-secret"
+    "keycloak-verifier-client-secret",
+    "keycloak-publication-admin-client-secret"
 )
 
 foreach ($secretFile in $secretFiles) {
