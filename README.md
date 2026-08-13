@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 3 aprobado**
-> Versión documental: **0.6.0**
+> Estado: **Fase 2 — fundamento de identidad en diseño**
+> Versión documental: **0.7.0**
 > Fecha de referencia: **2026-08-13**
 
 ## Propósito
@@ -42,6 +42,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Fase 1 — incremento 2](docs/11-phase-1-increment-2-tauri-spike.md) | Spike Tauri, toolchain Docker y puerta de aceptación del instalador. |
 | [Fase 1 — incremento 3](docs/12-phase-1-increment-3-api-health.md) | Configuración segura y consulta limitada al health de la API. |
 | [Runbook de Cloudflare Tunnel](docs/13-cloudflare-tunnel-runbook.md) | Inicio, verificación, diagnóstico, detención y rotación del conector. |
+| [Fase 2 — fundamento Keycloak](docs/14-phase-2-keycloak-foundation.md) | Decisión, frontera de confianza, incrementos, amenazas y pruebas de identidad. |
 | [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
 
 ## Decisiones iniciales
@@ -56,7 +57,15 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. El tercero fue validado el 2026-08-13: la ruta restringida `https://api.kontora-pos.store/health/live` funciona mediante Cloudflare Tunnel y el cliente instalado consulta ese contrato con mínimo privilegio, presenta un error controlado si la API se detiene y se recupera sin reiniciarse cuando vuelve a estar disponible. La integración y etiqueta de este incremento completan los entregables previstos para la Fase 1; la Fase 2 no comienza en este cambio. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. La
+Fase 2 comenzó con la selección de Keycloak autohospedado como proveedor OIDC y
+con el diseño de su frontera de confianza. Todavía no se ha incorporado el
+runtime de Keycloak ni autenticación al cliente o la API; esos cambios avanzarán
+en incrementos separados y verificables. Durante esta fase, las ramas integradas
+se conservarán congeladas localmente y en `origin` para facilitar comparaciones
+futuras, mientras `main` y las etiquetas continúan señalando el estado aprobado.
+GitHub Actions permanece aplazado y la puerta de calidad manual sigue siendo
+obligatoria. Aún no se incluyen trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 

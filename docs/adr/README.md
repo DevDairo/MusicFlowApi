@@ -14,6 +14,7 @@ Este directorio conserva decisiones arquitectónicas significativas, su contexto
 | [ADR-0006](0006-react-typescript-ui.md) | Usar React y TypeScript en Tauri | Accepted |
 | [ADR-0007](0007-sqlite-local-library.md) | Usar SQLite para el índice local | Accepted |
 | [ADR-0008](0008-containerized-tauri-toolchain.md) | Compilar el spike Tauri con una toolchain Docker desechable | Accepted |
+| [ADR-0009](0009-self-hosted-keycloak-identity.md) | Autohospedar Keycloak como proveedor OIDC inicial | Accepted |
 
 ## Convenciones
 

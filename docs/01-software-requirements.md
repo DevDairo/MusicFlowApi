@@ -1,9 +1,9 @@
 # Especificación de requisitos de software
 
-**Identificador:** SRS-MF-001  
-**Estado:** Borrador para validación  
-**Versión:** 0.1  
-**Fecha:** 2026-08-12
+**Identificador:** SRS-MF-001
+**Estado:** Borrador para validación
+**Versión:** 0.2
+**Fecha:** 2026-08-13
 
 ## 1. Convenciones
 
@@ -193,7 +193,11 @@ El 2026-08-12 el propietario aprobó el paquete D-001 a D-010:
 - PA-001: Windows 11 x64 será la primera plataforma validada.
 - PA-006: PostgreSQL con leases será la cola durable inicial.
 - PA-008: SQLite será el índice local del cliente.
-- PA-002 se aplaza hasta la entrada de Fase 2; el contrato OIDC/PKCE ya es obligatorio.
+- PA-002: Keycloak autohospedado es el proveedor inicial aprobado en la entrada
+  de la Fase 2. Se ejecutará en contenedores, con PostgreSQL aislado y un cliente
+  público de escritorio que exige Authorization Code + PKCE S256. La API
+  conservará identidad y autorización internas para evitar acoplar el dominio a
+  Keycloak.
 - PA-003 y PA-004 se resolverán con mediciones antes de cerrar Fase 3/iniciar procesamiento real en Fase 4.
 - PA-005 mantiene como regla el procesamiento exclusivo de contenido autorizado y compatible con las condiciones aplicables.
 - PA-007 usará inicialmente Windows Media Player y VLC; la matriz definitiva se aprobará en Fase 4.
