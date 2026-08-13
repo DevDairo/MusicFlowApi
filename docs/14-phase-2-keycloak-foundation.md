@@ -1,7 +1,7 @@
 # Fase 2 — fundamento de identidad con Keycloak
 
-**Estado:** Diseño en validación
-**Versión:** 0.1
+**Estado:** Incremento 2.2 aprobado; Fase 2 en curso
+**Versión:** 0.2
 **Fecha:** 2026-08-13
 
 ## 1. Objetivo
@@ -132,15 +132,41 @@ del propietario. No requiere construir imágenes porque no cambia runtime.
 - PostgreSQL de identidad, volumen, redes y health interno;
 - gateway con allowlist local;
 - secretos locales ignorados por Git;
-- realm/cliente reproducibles y usuarios de prueba creados manualmente;
+- realm/cliente reproducibles y administrador permanente aprovisionado;
 - consola accesible solo desde `127.0.0.1`.
+
+La cuenta creada por las opciones bootstrap de Keycloak es temporal. El
+aprovisionamiento privado debe crear un administrador permanente, comprobar su
+acceso y retirar `temp-admin` antes de publicar OIDC. Su contraseña seguirá en
+un archivo ignorado y nunca se mostrará en consola.
+
+Durante este incremento el hostname e issuer son locales para que también el
+login del realm administrativo `master` permanezca utilizable sin publicar el
+proveedor. `KEYCLOAK_HOSTNAME_URL` usa inicialmente
+`http://127.0.0.1:8081`. Keycloak aplica el hostname frontal al endpoint de
+autenticación de la consola incluso cuando `hostname-admin` está separado; por
+eso no se declarará el issuer público antes de configurar el túnel.
 
 Puerta: inicio desde cero, persistencia tras reinicio, rutas administrativas
 rechazadas por el gateway y regresión existente en verde.
 
+El import de realm se usa únicamente para crear una base vacía. Keycloak omite
+un realm ya existente durante `--import-realm`; por tanto, todo cambio posterior
+de configuración se tratará como una migración explícita, idempotente y
+verificable, nunca como una sobreescritura implícita del volumen.
+
+Los usuarios finales de prueba se crearán inmediatamente antes de integrar el
+flujo real de login. Añadirlos en este runtime, cuando ningún cliente ni API los
+consume todavía, aumentaría datos y credenciales operativas sin aportar una
+prueba funcional.
+
 ### Incremento 2.3 — publicación OIDC restringida
 
 - hostname `auth.kontora-pos.store` en el túnel existente;
+- cambio explícito de `KEYCLOAK_HOSTNAME_URL` a
+  `https://auth.kontora-pos.store` y nueva validación de todos los redirects;
+- proxy headers habilitados solo después de comprobar que el gateway los
+  sobrescribe y que Keycloak solo es alcanzable a través de redes aprobadas;
 - issuer estable y proxy headers verificados;
 - discovery, login y JWKS públicos;
 - master/admin/health/metrics inaccesibles públicamente;

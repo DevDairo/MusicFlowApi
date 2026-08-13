@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 2 — fundamento de identidad en diseño**
-> Versión documental: **0.7.0**
+> Estado: **Fase 2 — runtime privado de identidad aprobado**
+> Versión documental: **0.8.0**
 > Fecha de referencia: **2026-08-13**
 
 ## Propósito
@@ -43,6 +43,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Fase 1 — incremento 3](docs/12-phase-1-increment-3-api-health.md) | Configuración segura y consulta limitada al health de la API. |
 | [Runbook de Cloudflare Tunnel](docs/13-cloudflare-tunnel-runbook.md) | Inicio, verificación, diagnóstico, detención y rotación del conector. |
 | [Fase 2 — fundamento Keycloak](docs/14-phase-2-keycloak-foundation.md) | Decisión, frontera de confianza, incrementos, amenazas y pruebas de identidad. |
+| [Fase 2 — incremento 2](docs/15-phase-2-increment-2-keycloak-runtime.md) | Runtime privado de Keycloak, operación, seguridad, verificaciones e incidencias. |
 | [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
 
 ## Decisiones iniciales
@@ -58,14 +59,29 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 ## Estado de implementación
 
 La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. La
-Fase 2 comenzó con la selección de Keycloak autohospedado como proveedor OIDC y
-con el diseño de su frontera de confianza. Todavía no se ha incorporado el
-runtime de Keycloak ni autenticación al cliente o la API; esos cambios avanzarán
-en incrementos separados y verificables. Durante esta fase, las ramas integradas
-se conservarán congeladas localmente y en `origin` para facilitar comparaciones
-futuras, mientras `main` y las etiquetas continúan señalando el estado aprobado.
-GitHub Actions permanece aplazado y la puerta de calidad manual sigue siendo
-obligatoria. Aún no se incluyen trabajos, `yt-dlp` ni FFmpeg.
+Fase 2 seleccionó Keycloak autohospedado como proveedor OIDC y ya implementó su
+runtime privado reproducible. El realm y el cliente nativo, el gateway de
+mínimo privilegio, el administrador permanente y la persistencia fueron
+verificados localmente; todavía no existe publicación pública de OIDC, login en
+Tauri ni validación JWT en la API. Durante esta fase, las ramas integradas se
+conservarán congeladas localmente y en `origin`. GitHub Actions permanece
+aplazado y la puerta de calidad manual sigue siendo obligatoria. Aún no se
+incluyen trabajos, `yt-dlp` ni FFmpeg.
+
+## Verificación de identidad privada
+
+No requiere instalar dependencias en Windows. Con Docker Desktop activo:
+
+```powershell
+Set-Location C:\Users\Genoma\Documents\MusicFlow
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\initialize-identity-secrets.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-identity.ps1 -Fresh
+```
+
+La prueba crea un proyecto temporal aislado en los puertos `18081` y `18082`,
+comprueba el contrato y elimina únicamente su volumen temporal. La operación y
+la consola administrativa local están descritas en el documento del incremento
+2.2.
 
 ## Puerta de calidad del incremento 1
 

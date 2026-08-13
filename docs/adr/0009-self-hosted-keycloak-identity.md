@@ -40,6 +40,10 @@ restricciones:
 - El hostname público propuesto es `https://auth.kontora-pos.store`. La
   publicación permitirá solo los paths necesarios de OIDC y recursos del realm;
   no publicará `/admin/`, `/realms/master/`, health ni métricas.
+- Antes de esa publicación, el runtime privado usará temporalmente el hostname
+  local `http://127.0.0.1:8081`. El cambio de issuer formará parte de una puerta
+  explícita y ocurrirá antes de integrar Tauri o la validación de tokens en la
+  API; ningún contrato de producción dependerá del issuer local.
 - La administración inicial se realizará únicamente desde el host local. Su
   acceso exacto se validará en un spike antes de declarar el despliegue
   operativo.
@@ -114,7 +118,7 @@ La decisión se considerará viable para continuar cuando:
    navegador y un puerto loopback efímero.
 5. Un callback con `state` incorrecto, código reutilizado o redirect no aprobado
    sea rechazado.
-6. Reiniciar Keycloak conserve realm, cliente y usuarios de prueba.
+6. Reiniciar Keycloak conserve realm, cliente y administrador permanente.
 7. Backup y restauración de la configuración y base de datos tengan un
    procedimiento documentado antes de una beta pública.
 
