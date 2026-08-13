@@ -18,6 +18,13 @@ COPY src-tauri/build.rs ./
 COPY src-tauri/src ./src
 RUN cargo generate-lockfile
 
+FROM ${RUST_IMAGE} AS rust-lock-check
+WORKDIR /workspace/src-tauri
+COPY src-tauri/Cargo.toml src-tauri/Cargo.lock ./
+COPY src-tauri/build.rs ./
+COPY src-tauri/src ./src
+RUN cargo metadata --locked --format-version 1 > /dev/null
+
 FROM scratch AS lockfiles
 COPY --from=javascript-lock /workspace/pnpm-lock.yaml /pnpm-lock.yaml
 COPY --from=rust-lock /workspace/src-tauri/Cargo.lock /src-tauri/Cargo.lock

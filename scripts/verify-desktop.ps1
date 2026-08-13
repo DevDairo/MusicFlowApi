@@ -79,6 +79,18 @@ function Initialize-Lockfiles {
     }
 }
 
+function Assert-LockfilesMatchManifests {
+    Write-Host "Comprobando que los lockfiles coincidan con los manifiestos..." -ForegroundColor Cyan
+    Invoke-Docker build `
+        --file $script:dockerfile `
+        --target javascript-dependencies `
+        $script:desktopRoot
+    Invoke-Docker build `
+        --file $script:dockerfile `
+        --target rust-lock-check `
+        $script:desktopRoot
+}
+
 $dockerExecutable = Resolve-DockerExecutable
 
 if (-not $SkipInstaller -and -not $AcceptMicrosoftSdkLicense) {
@@ -89,6 +101,7 @@ Push-Location $projectRoot
 try {
     Invoke-Docker info --format "Docker Engine {{.ServerVersion}}"
     Initialize-Lockfiles
+    Assert-LockfilesMatchManifests
 
     Write-Host "Ejecutando formato, lint, pruebas y build web dentro de Docker..." -ForegroundColor Cyan
     Invoke-Docker build `

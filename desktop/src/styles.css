@@ -134,6 +134,62 @@ h1 {
   box-shadow: 0 0 0 7px rgb(74 222 128 / 10%);
 }
 
+.status-card--idle .status-dot {
+  background: #94a3b8;
+  box-shadow: 0 0 0 7px rgb(148 163 184 / 10%);
+}
+
+.status-card--loading .status-dot {
+  background: #fbbf24;
+  box-shadow: 0 0 0 7px rgb(251 191 36 / 10%);
+}
+
+.status-card--error {
+  border-color: rgb(248 113 113 / 24%);
+}
+
+.status-card--error .status-dot {
+  background: #f87171;
+  box-shadow: 0 0 0 7px rgb(248 113 113 / 10%);
+}
+
+.health-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.health-actions button {
+  min-width: 180px;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgb(94 225 183 / 28%);
+  border-radius: 10px;
+  color: #071311;
+  background: #5ee1b7;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.health-actions button:hover:not(:disabled) {
+  background: #78ebc6;
+}
+
+.health-actions button:focus-visible {
+  outline: 3px solid rgb(94 225 183 / 35%);
+  outline-offset: 3px;
+}
+
+.health-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.health-actions span {
+  color: #78968c;
+  font-size: 0.78rem;
+}
+
 .boundaries {
   display: flex;
   flex-wrap: wrap;
@@ -168,6 +224,11 @@ footer {
   }
 
   footer {
+    flex-direction: column;
+  }
+
+  .health-actions {
+    align-items: stretch;
     flex-direction: column;
   }
 }
