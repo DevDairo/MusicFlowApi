@@ -17,6 +17,7 @@ Incluido:
 - interfaz mínima con React y TypeScript;
 - envoltura nativa Tauri 2 con una ventana principal;
 - pruebas automatizadas del contenido y la configuración de seguridad;
+- icono fuente SVG y recursos de plataforma generados dentro de Docker;
 - dependencias directas fijadas y lockfiles reproducibles;
 - formato, lint, pruebas y build web en Docker;
 - compilación cruzada de un instalador NSIS `x86_64` mediante `cargo-xwin`;
@@ -88,14 +89,14 @@ La primera ejecución puede tardar y descargar varios gigabytes. Los artefactos 
 
 ## 7. Criterios de aceptación
 
-- [ ] Los lockfiles existen y están incluidos en el diff.
-- [ ] Prettier no encuentra diferencias.
-- [ ] Oxlint termina sin advertencias.
-- [ ] TypeScript compila en modo estricto.
-- [ ] Las pruebas automatizadas pasan.
-- [ ] Vite produce el frontend de release.
-- [ ] Rust supera `cargo fmt --check`.
-- [ ] `cargo-xwin` produce exactamente un `*-setup.exe` NSIS.
+- [x] Los lockfiles existen y están incluidos en el diff.
+- [x] Prettier no encuentra diferencias.
+- [x] Oxlint termina sin advertencias.
+- [x] TypeScript compila en modo estricto.
+- [x] Las pruebas automatizadas pasan.
+- [x] Vite produce el frontend de release.
+- [x] Rust supera `cargo fmt --check`.
+- [x] `cargo-xwin` produce exactamente un `*-setup.exe` NSIS.
 - [ ] El instalador se ejecuta para el usuario actual sin pedir permisos administrativos.
 - [ ] La aplicación abre, presenta la pantalla de la puerta A y cierra correctamente.
 - [ ] La desinstalación no afecta datos ajenos ni servicios del backend.
@@ -106,9 +107,12 @@ La primera ejecución puede tardar y descargar varios gigabytes. Los artefactos 
 |---|---|---|
 | Calidad web en Docker | Aprobada el 2026-08-13 | Lockfiles congelados; Prettier, Oxlint, Vitest, TypeScript y Vite finalizaron correctamente mediante `verify-desktop.ps1 -SkipInstaller`. |
 | Regresión del backend | Aprobada el 2026-08-13 | Lint, formato, migración, 10 pruebas automatizadas y health checks de API, worker y PostgreSQL finalizaron correctamente mediante `verify.ps1`. |
-| Instalador NSIS | Pendiente | Ruta y hash del ejecutable. |
+| Instalador NSIS | Aprobado el 2026-08-13 | `artifacts/desktop-20260813-083106/MusicFlow_0.1.0_x64-setup.exe`; 1 983 384 bytes; SHA-256 `AB3DDBCF13A9DBB4E5D66C22122A27A65205FA33121453CDF356B247784CC3B8`. |
+| Firma del artefacto | Esperada para desarrollo | PowerShell informa `NotSigned`. La firma de código permanece fuera del alcance hasta preparar la distribución pública. |
 | Instalación y apertura en Windows | Pendiente | Confirmación manual del propietario. |
 | Desinstalación | Pendiente | Confirmación manual del propietario. |
+
+Durante la primera construcción se detectaron y resolvieron tres defectos aislados del toolchain: ausencia del componente `rustfmt`, envío incorrecto de `--locked` a Tauri en lugar del runner y ausencia del recurso `icon.ico`. El SVG fuente ahora se conserva en el repositorio y Tauri deriva los recursos de plataforma dentro de Docker.
 
 Este documento no se marcará como aprobado ni se realizará merge hasta completar la evidencia.
 

@@ -47,6 +47,7 @@ RUN apt-get update \
 RUN npm install --global "pnpm@${PNPM_VERSION}"
 RUN rustup target add x86_64-pc-windows-msvc
 RUN cargo install --locked --version 0.22.0 cargo-xwin
+RUN rustup component add rustfmt
 
 FROM windows-toolchain AS windows-builder
 ARG ACCEPT_MICROSOFT_SDK_LICENSE=no
@@ -56,12 +57,13 @@ WORKDIR /workspace
 COPY package.json pnpm-lock.yaml ./
 COPY --from=javascript-dependencies /workspace/node_modules ./node_modules
 COPY . .
+RUN pnpm tauri icon src-tauri/app-icon.svg --output src-tauri/icons
 RUN cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 RUN pnpm tauri build \
     --runner cargo-xwin \
     --target x86_64-pc-windows-msvc \
     --bundles nsis \
-    --locked
+    -- --locked
 
 FROM scratch AS artifact
 COPY --from=windows-builder /workspace/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/ /
