@@ -22,6 +22,33 @@ x-backend-security: &backend-security
     - /run/musicflow:size=1m,uid=10001,gid=10001,mode=0700
 
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.3@sha256:e39ee8da81ad5e05d77f38d2f51c60ca51bf2a8450ac3abab50c17fdb91d91bf
+    profiles:
+      - tunnel
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --loglevel
+      - info
+      - run
+      - --token-file
+      - /run/secrets/cloudflare_tunnel_token
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    secrets:
+      - cloudflare_tunnel_token
+    networks:
+      - edge
+
   postgres:
     image: postgres:18.4-bookworm
     environment:
@@ -131,3 +158,7 @@ networks:
   edge:
   backend:
     internal: true
+
+secrets:
+  cloudflare_tunnel_token:
+    file: ./.secrets/cloudflare-tunnel-token

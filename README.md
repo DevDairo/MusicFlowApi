@@ -2,7 +2,7 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 2 aprobado**
+> Estado: **Fase 1 — incremento 3 en implementación**
 > Versión documental: **0.5.0**
 > Fecha de referencia: **2026-08-13**
 
@@ -40,6 +40,8 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Fase 1 — incremento 1](docs/09-phase-1-increment-1.md) | Alcance, verificaciones y evidencia del esqueleto técnico. |
 | [Flujo manual de control de versiones](docs/10-manual-version-control-workflow.md) | Ramas, validación, merge, etiquetas y recuperación. |
 | [Fase 1 — incremento 2](docs/11-phase-1-increment-2-tauri-spike.md) | Spike Tauri, toolchain Docker y puerta de aceptación del instalador. |
+| [Fase 1 — incremento 3](docs/12-phase-1-increment-3-api-health.md) | Configuración segura y consulta limitada al health de la API. |
+| [Runbook de Cloudflare Tunnel](docs/13-cloudflare-tunnel-runbook.md) | Inicio, verificación, diagnóstico, detención y rotación del conector. |
 | [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
 
 ## Decisiones iniciales
@@ -54,7 +56,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El segundo incremento fue aprobado el 2026-08-13: añade un cliente Tauri mínimo compilado mediante un contenedor desechable y validado mediante instalación, reapertura y desinstalación manuales; Docker no forma parte del runtime del cliente. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El segundo incremento fue aprobado el 2026-08-13: añade un cliente Tauri mínimo compilado mediante un contenedor desechable y validado mediante instalación, reapertura y desinstalación manuales; Docker no forma parte del runtime del cliente. El tercer incremento está en implementación y ya validó la ruta restringida `https://api.kontora-pos.store/health/live` mediante Cloudflare Tunnel; todavía falta integrar esa consulta en el cliente. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 
