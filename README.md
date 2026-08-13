@@ -2,9 +2,9 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 1 aprobado**
-> Versión documental: **0.4.0**
-> Fecha de referencia: **2026-08-12**
+> Estado: **Fase 1 — incremento 2 aprobado**
+> Versión documental: **0.5.0**
+> Fecha de referencia: **2026-08-13**
 
 ## Propósito
 
@@ -39,6 +39,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Revisión de salida de Fase 0](docs/08-phase-0-exit-review.md) | Evidencia de aprobación y cierre de la fase. |
 | [Fase 1 — incremento 1](docs/09-phase-1-increment-1.md) | Alcance, verificaciones y evidencia del esqueleto técnico. |
 | [Flujo manual de control de versiones](docs/10-manual-version-control-workflow.md) | Ramas, validación, merge, etiquetas y recuperación. |
+| [Fase 1 — incremento 2](docs/11-phase-1-increment-2-tauri-spike.md) | Spike Tauri, toolchain Docker y puerta de aceptación del instalador. |
 | [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
 
 ## Decisiones iniciales
@@ -53,13 +54,13 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El incremento demuestra un esqueleto reproducible de API, worker y PostgreSQL mediante Docker Compose. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. La Fase 1 continúa abierta por el cliente Tauri mínimo. Aún no incluye autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El segundo incremento fue aprobado el 2026-08-13: añade un cliente Tauri mínimo compilado mediante un contenedor desechable y validado mediante instalación, reapertura y desinstalación manuales; Docker no forma parte del runtime del cliente. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 
 La puerta fue aprobada con construcción reproducible de imágenes, migración desde una base vacía, análisis estático, formato, 10 pruebas automatizadas y health checks de API, worker y PostgreSQL. Solo la API publica un puerto y lo enlaza a `127.0.0.1`.
 
-## Verificación del incremento actual
+## Verificación del backend aprobado
 
 No se requiere instalar Python, Node.js, Rust ni dependencias del proyecto en Windows. Con Docker Desktop activo, PowerShell ejecutará:
 
@@ -69,3 +70,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 ```
 
 El script usa `.env.example`, construye imágenes aisladas, levanta un entorno temporal, ejecuta lint/pruebas y lo elimina al finalizar. No utiliza credenciales reales ni expone PostgreSQL o el worker.
+
+## Verificación del cliente en curso
+
+El cliente se instala y ejecuta directamente en Windows. Docker se utiliza únicamente como toolchain de compilación y no se incorpora a la aplicación distribuida. Después de revisar y aceptar la licencia del SDK de Microsoft requerida por `cargo-xwin`:
+
+```powershell
+Set-Location C:\Users\Genoma\Documents\MusicFlow
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-desktop.ps1 -AcceptMicrosoftSdkLicense
+```
+
+El script genera los lockfiles en su primera ejecución si fueran necesarios, ejecuta formato, lint, pruebas y build web, y exporta un instalador NSIS a una carpeta ignorada bajo `artifacts/`. La puerta no se aprueba hasta instalar y abrir manualmente ese ejecutable en Windows.

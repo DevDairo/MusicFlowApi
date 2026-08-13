@@ -13,6 +13,7 @@ Este directorio conserva decisiones arquitectónicas significativas, su contexto
 | [ADR-0005](0005-python-fastapi-backend.md) | Usar Python y FastAPI para API/worker | Accepted |
 | [ADR-0006](0006-react-typescript-ui.md) | Usar React y TypeScript en Tauri | Accepted |
 | [ADR-0007](0007-sqlite-local-library.md) | Usar SQLite para el índice local | Accepted |
+| [ADR-0008](0008-containerized-tauri-toolchain.md) | Compilar el spike Tauri con una toolchain Docker desechable | Accepted |
 
 ## Convenciones
 
