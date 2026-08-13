@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [switch]$KeepRunning
+    [switch]$KeepRunning,
+    [ValidateRange(1024, 65535)][int]$ApiPort = 8000
 )
 
 $ErrorActionPreference = "Stop"
@@ -10,6 +11,8 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $composeFile = Join-Path $projectRoot "compose.yaml"
 $envFile = Join-Path $projectRoot ".env.example"
 $projectName = "musicflow-verify"
+$previousApiPort = $env:MUSICFLOW_API_PORT
+$env:MUSICFLOW_API_PORT = [string]$ApiPort
 
 function Resolve-DockerExecutable {
     $dockerCommand = Get-Command docker -ErrorAction SilentlyContinue
@@ -80,8 +83,8 @@ try {
         "no:cacheprovider"
     )
 
-    $live = Invoke-RestMethod -Uri "http://127.0.0.1:8000/health/live" -TimeoutSec 5
-    $ready = Invoke-RestMethod -Uri "http://127.0.0.1:8000/health/ready" -TimeoutSec 5
+    $live = Invoke-RestMethod -Uri "http://127.0.0.1:$ApiPort/health/live" -TimeoutSec 5
+    $ready = Invoke-RestMethod -Uri "http://127.0.0.1:$ApiPort/health/ready" -TimeoutSec 5
 
     if ($live.status -ne "alive") {
         throw "El health check live no devolvio el estado esperado."
@@ -94,8 +97,13 @@ try {
     Write-Host "Verificacion completada correctamente." -ForegroundColor Green
 }
 finally {
-    if (-not $KeepRunning -and $dockerExecutable) {
-        Invoke-Compose down --volumes --remove-orphans
+    try {
+        if (-not $KeepRunning -and $dockerExecutable) {
+            Invoke-Compose down --volumes --remove-orphans
+        }
     }
-    Pop-Location -ErrorAction SilentlyContinue
+    finally {
+        $env:MUSICFLOW_API_PORT = $previousApiPort
+        Pop-Location -ErrorAction SilentlyContinue
+    }
 }
