@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 2 — runtime privado de identidad aprobado**
-> Versión documental: **0.8.0**
+> Estado: **Fase 2 — publicación OIDC aprobada**
+> Versión documental: **0.9.0**
 > Fecha de referencia: **2026-08-13**
 
 ## Propósito
@@ -11,7 +11,9 @@ Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos
 MusicFlow separará claramente dos productos desplegables:
 
 - **Cliente de escritorio:** aplicación Tauri instalada en el equipo del usuario. Gestiona la experiencia de uso y la biblioteca local.
-- **Plataforma de servidor:** API, worker de procesamiento y PostgreSQL en contenedores independientes. Solo la API tendrá entrada pública controlada.
+- **Plataforma de servidor:** API, worker de procesamiento y PostgreSQL en
+  contenedores independientes. La API y el proveedor OIDC tienen entradas
+  públicas controladas; worker, datos y administración permanecen privados.
 
 El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el procesamiento. La salida priorizará compatibilidad y calidad perceptual: MP3 VBR de alta calidad con metadatos normalizados. El sistema no prometerá audio Hi-Res cuando la fuente no lo proporcione ni intentará evadir restricciones del proveedor.
 
@@ -44,13 +46,15 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Runbook de Cloudflare Tunnel](docs/13-cloudflare-tunnel-runbook.md) | Inicio, verificación, diagnóstico, detención y rotación del conector. |
 | [Fase 2 — fundamento Keycloak](docs/14-phase-2-keycloak-foundation.md) | Decisión, frontera de confianza, incrementos, amenazas y pruebas de identidad. |
 | [Fase 2 — incremento 2](docs/15-phase-2-increment-2-keycloak-runtime.md) | Runtime privado de Keycloak, operación, seguridad, verificaciones e incidencias. |
+| [Fase 2 — incremento 3](docs/16-phase-2-increment-3-oidc-publication.md) | Publicación OIDC restringida, proxy confiable, migración y matriz pública. |
 | [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
 
 ## Decisiones iniciales
 
 - Cliente de escritorio con Tauri 2.
 - API, worker y PostgreSQL en contenedores separados.
-- La API es el único punto de entrada público; el worker y la base de datos permanecen en red privada.
+- La API y el proveedor OIDC son las únicas entradas públicas; worker, bases de
+  datos y administración permanecen en redes privadas.
 - Acceso remoto inicial mediante Cloudflare Tunnel, sin exponer puertos del host directamente.
 - Biblioteca y archivos finales almacenados localmente en el dispositivo del usuario.
 - Almacenamiento temporal del servidor mediante volumen de Docker en el MVP, abstraído para permitir un futuro almacenamiento compatible con S3.
@@ -59,11 +63,12 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 ## Estado de implementación
 
 La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. La
-Fase 2 seleccionó Keycloak autohospedado como proveedor OIDC y ya implementó su
-runtime privado reproducible. El realm y el cliente nativo, el gateway de
-mínimo privilegio, el administrador permanente y la persistencia fueron
-verificados localmente; todavía no existe publicación pública de OIDC, login en
-Tauri ni validación JWT en la API. Durante esta fase, las ramas integradas se
+Fase 2 seleccionó Keycloak autohospedado como proveedor OIDC, implementó su
+runtime reproducible y verificó la publicación mínima en
+`auth.kontora-pos.store`. Discovery, JWKS e inicio de login están disponibles;
+la administración, el realm `master`, health y métricas permanecen fuera de la
+frontera pública. Todavía no existe login en Tauri ni validación JWT en la API.
+Durante esta fase, las ramas integradas se
 conservarán congeladas localmente y en `origin`. GitHub Actions permanece
 aplazado y la puerta de calidad manual sigue siendo obligatoria. Aún no se
 incluyen trabajos, `yt-dlp` ni FFmpeg.
