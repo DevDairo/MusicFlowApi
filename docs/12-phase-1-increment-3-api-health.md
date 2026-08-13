@@ -1,8 +1,8 @@
 # Fase 1 — incremento 3: cliente de salud de la API
 
-**Estado:** En implementación
+**Estado:** Aprobado; merge y etiqueta pendientes
 
-**Versión:** 0.1
+**Versión:** 0.3
 
 **Fecha:** 2026-08-13
 
@@ -28,7 +28,7 @@ Incluido:
 
 Excluido:
 
-- activación o publicación del Cloudflare Tunnel;
+- administración de Cloudflare desde el cliente instalado;
 - credenciales o tokens de Cloudflare dentro del cliente;
 - OAuth/OIDC, sesiones y almacenamiento de tokens;
 - `GET /health/ready`, porque revela el estado de dependencias internas y no es necesario para este recorrido;
@@ -75,6 +75,8 @@ Estados de interfaz:
 
 Los errores visibles serán accionables, pero no expondrán trazas, rutas internas ni detalles de red sensibles.
 
+El timeout de conexión del plugin se expresa en milisegundos. Tanto ese límite como el timeout total se fijan en 5.000 ms; una prueba protege esta unidad para evitar que una conexión HTTPS normal sea abortada prematuramente.
+
 ## 6. Estrategia de pruebas
 
 - configuración: esquema, origen, ruta, query y fragmento;
@@ -87,15 +89,15 @@ Los errores visibles serán accionables, pero no expondrán trazas, rutas intern
 ## 7. Criterios de aceptación
 
 - [x] El subdominio de la API está confirmado y documentado.
-- [ ] Las dependencias directas y lockfiles están fijados.
-- [ ] La configuración rechaza URLs no aprobadas.
-- [ ] La capability permite únicamente los endpoints de salud aprobados.
-- [ ] La CSP continúa bloqueando conexiones remotas directas del WebView.
-- [ ] Las pruebas de configuración, adaptador, UI y seguridad pasan.
-- [ ] Formato, lint, TypeScript, Vite y `cargo fmt --check` pasan.
-- [ ] La regresión completa del backend pasa.
-- [ ] Se produce exactamente un instalador NSIS.
-- [ ] La prueba manual valida éxito con API activa y error controlado con API detenida.
+- [x] Las dependencias directas y lockfiles están fijados.
+- [x] La configuración rechaza URLs no aprobadas.
+- [x] La capability permite únicamente los endpoints de salud aprobados.
+- [x] La CSP continúa bloqueando conexiones remotas directas del WebView.
+- [x] Las pruebas de configuración, adaptador, UI y seguridad pasan.
+- [x] Formato, lint, TypeScript, Vite y `cargo fmt --check` pasan.
+- [x] La regresión completa del backend pasa.
+- [x] Se produce exactamente un instalador NSIS.
+- [x] La prueba manual valida éxito con API activa, error controlado con API detenida y recuperación posterior.
 
 ## 8. Riesgos y recuperación
 
@@ -107,13 +109,41 @@ El cambio no modifica la base de datos. Para recuperar el estado anterior se des
 
 ## 9. Condición de infraestructura
 
-El túnel remoto `musicflow-local-api` fue creado en Cloudflare y su conector aún no está activo. El token se almacenará en un archivo local excluido de Git y se montará como secreto de Docker; nunca se incorporará al código, `.env.example`, documentación ni historial de comandos.
+El túnel remoto `musicflow-local-api` está activo. Su token permanece en un archivo local excluido de Git y se monta como secreto de Docker; nunca se incorpora al código, `.env.example`, documentación ni argumentos visibles del contenedor.
 
 El conector se ejecuta mediante el perfil opcional `tunnel` de Compose. Comparte únicamente la red `edge` con la API y recibe el token desde `/run/secrets/cloudflare_tunnel_token` mediante `--token-file`; no publica puertos ni instala `cloudflared` en Windows. El hostname remoto deberá dirigir al origen interno `http://api:8000`, porque `localhost` dentro del contenedor corresponde al propio conector.
 
-El 2026-08-13 se validó la infraestructura: el conector registró cuatro conexiones, `/health/live` respondió HTTP 200 local y públicamente, y `/` junto con `/health/ready` fueron rechazados con HTTP 404. La regresión del backend aprobó dependencias, lint, formato, migraciones, 10 pruebas y health checks. La implementación del cliente Tauri sigue pendiente.
+El 2026-08-13 se validó la infraestructura: el conector registró cuatro conexiones, `/health/live` respondió HTTP 200 local y públicamente, y `/` junto con `/health/ready` fueron rechazados con HTTP 404. La regresión del backend aprobó dependencias, lint, formato, migraciones, 10 pruebas y health checks.
 
-## 10. Referencias
+## 10. Evidencia automatizada
+
+| Comprobación | Resultado del 2026-08-13 |
+|---|---|
+| Lockfiles | `pnpm install --frozen-lockfile` y `cargo metadata --locked` aprobados dentro de Docker. |
+| Calidad del cliente | Prettier, Oxlint, 18 pruebas Vitest, TypeScript y Vite aprobados. |
+| Compilación nativa | `cargo fmt --check`, plugin HTTP 2.5.9, enlace de Windows y empaquetado NSIS aprobados. |
+| Infraestructura activa | API y PostgreSQL healthy; health local y público con HTTP 200. |
+| Instalador corregido | `artifacts/desktop-20260813-110233/MusicFlow_0.1.0_x64-setup.exe`; 3 614 875 bytes; SHA-256 `A05DBAB6FD53A80E8A0F227CF999C55AE21A3C24C20F1DB29664A6833B1DDEA4`. |
+| Recorrido positivo instalado | Aprobado manualmente el 2026-08-13: la UI mostró **API disponible** y confirmó el contrato público esperado. |
+| Degradación y recuperación | Aprobada manualmente el 2026-08-13: al detener solo la API, el cliente mostró el estado no disponible sin cerrarse; al levantarla nuevamente, una nueva consulta volvió a **API disponible** sin reiniciar el cliente. |
+| Ciclo de instalación | Aprobado manualmente el 2026-08-13: el cliente se cerró, reabrió, volvió a consultar la API y se desinstaló correctamente. |
+
+El instalador de desarrollo no está firmado. La compilación cruzada también conserva las advertencias conocidas de autodetección de `clang-cl` y charset de NSIS; ninguna impidió compilar, enlazar o empaquetar la aplicación.
+
+Durante la primera prueba instalada, el adaptador falló porque `connectTimeout` se había configurado en `5` interpretándolo erróneamente como segundos. El plugin expresa ese argumento en milisegundos y el endpoint público medido necesitó 565 ms. El cambio mínimo a `5_000`, respaldado por una prueba de regresión, resolvió el defecto sin ampliar la capability ni modificar el túnel. El artefacto de la carpeta `desktop-20260813-104915` queda descartado.
+
+## 11. Protocolo de aceptación manual
+
+1. Instalar el artefacto exacto registrado en la evidencia y abrir MusicFlow.
+2. Pulsar **Comprobar conexión** con el túnel activo; debe mostrarse **API disponible**.
+3. Detener únicamente el origen con `docker compose --profile tunnel stop api`; el conector y PostgreSQL deben permanecer activos.
+4. Pulsar nuevamente el botón; debe mostrarse un error controlado sin detalles internos ni cierre de la aplicación.
+5. Recuperar el origen con `docker compose --profile tunnel start api`, esperar que la ruta pública responda y repetir la consulta; debe volver a **API disponible**.
+6. Reabrir y desinstalar el cliente para completar la misma puerta de instalación del incremento anterior.
+
+Los seis pasos fueron aprobados por el propietario el 2026-08-13. No se iniciará la siguiente fase hasta integrar esta rama en `main`, etiquetar el incremento y verificar el estado limpio del repositorio.
+
+## 12. Referencias
 
 - [Tauri: HTTP Client](https://v2.tauri.app/plugin/http-client/)
 - [Tauri: Permissions](https://v2.tauri.app/security/permissions/)

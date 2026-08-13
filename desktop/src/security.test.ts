@@ -15,7 +15,13 @@ type TauriConfiguration = {
 };
 
 type Capability = {
-  permissions: string[];
+  permissions: Array<
+    | string
+    | {
+        identifier: string;
+        allow: Array<{ url: string }>;
+      }
+  >;
   windows: string[];
 };
 
@@ -26,7 +32,7 @@ function readJson<T>(relativeUrl: string): T {
 }
 
 describe("frontera de seguridad Tauri", () => {
-  it("no expone APIs nativas durante el spike", () => {
+  it("expone solo el health aprobado mediante el cliente nativo", () => {
     const configuration = readJson<TauriConfiguration>(
       "../src-tauri/tauri.conf.json",
     );
@@ -39,6 +45,19 @@ describe("frontera de seguridad Tauri", () => {
     expect(configuration.app.security.csp).not.toContain("https:");
     expect(configuration.plugins).toBeUndefined();
     expect(capability.windows).toEqual(["main"]);
-    expect(capability.permissions).toEqual([]);
+    expect(capability.permissions).toEqual([
+      {
+        identifier: "http:default",
+        allow: [
+          { url: "http://127.0.0.1:8000/health/live" },
+          { url: "https://api.kontora-pos.store/health/live" },
+        ],
+      },
+    ]);
+
+    const serializedPermissions = JSON.stringify(capability.permissions);
+    expect(serializedPermissions).not.toContain("*");
+    expect(serializedPermissions).not.toContain("/health/ready");
+    expect(serializedPermissions).not.toContain("https://kontora-pos.store");
   });
 });

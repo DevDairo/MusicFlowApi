@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 3 en implementación**
-> Versión documental: **0.5.0**
+> Estado: **Fase 1 — incremento 3 aprobado; cierre pendiente de merge y etiqueta**
+> Versión documental: **0.6.0**
 > Fecha de referencia: **2026-08-13**
 
 ## Propósito
@@ -56,7 +56,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y el primer incremento técnico de la Fase 1 fueron aprobados el 2026-08-12. El segundo incremento fue aprobado el 2026-08-13: añade un cliente Tauri mínimo compilado mediante un contenedor desechable y validado mediante instalación, reapertura y desinstalación manuales; Docker no forma parte del runtime del cliente. El tercer incremento está en implementación y ya validó la ruta restringida `https://api.kontora-pos.store/health/live` mediante Cloudflare Tunnel; todavía falta integrar esa consulta en el cliente. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. El tercero fue validado el 2026-08-13: la ruta restringida `https://api.kontora-pos.store/health/live` funciona mediante Cloudflare Tunnel y el cliente instalado consulta ese contrato con mínimo privilegio, presenta un error controlado si la API se detiene y se recupera sin reiniciarse cuando vuelve a estar disponible. El cierre formal de la Fase 1 queda pendiente únicamente del merge y la etiqueta de esta rama. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 
@@ -73,7 +73,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 
 El script usa `.env.example`, construye imágenes aisladas, levanta un entorno temporal, ejecuta lint/pruebas y lo elimina al finalizar. No utiliza credenciales reales ni expone PostgreSQL o el worker.
 
-## Verificación del cliente en curso
+## Verificación del cliente aprobada
 
 El cliente se instala y ejecuta directamente en Windows. Docker se utiliza únicamente como toolchain de compilación y no se incorpora a la aplicación distribuida. Después de revisar y aceptar la licencia del SDK de Microsoft requerida por `cargo-xwin`:
 
@@ -82,4 +82,4 @@ Set-Location C:\Users\Genoma\Documents\MusicFlow
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-desktop.ps1 -AcceptMicrosoftSdkLicense
 ```
 
-El script genera los lockfiles en su primera ejecución si fueran necesarios, ejecuta formato, lint, pruebas y build web, y exporta un instalador NSIS a una carpeta ignorada bajo `artifacts/`. La puerta no se aprueba hasta instalar y abrir manualmente ese ejecutable en Windows.
+El script genera los lockfiles en su primera ejecución si fueran necesarios, comprueba en cada ejecución que coincidan con sus manifiestos, ejecuta formato, lint, pruebas y build web, y exporta un instalador NSIS a una carpeta ignorada bajo `artifacts/`. La puerta fue aprobada mediante instalación, consulta pública, degradación controlada, recuperación, reapertura y desinstalación en Windows.
