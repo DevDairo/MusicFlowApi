@@ -1,8 +1,8 @@
 # Flujo manual de control de versiones
 
 **Estado:** Aprobado
-**Versión:** 1.0
-**Fecha:** 2026-08-12
+**Versión:** 1.1
+**Fecha:** 2026-08-13
 
 ## 1. Objetivo
 
@@ -100,12 +100,40 @@ git push origin main
 
 `--no-ff` conserva un punto visible de integración. No se hará push directo de implementación a `main` ni se utilizará `--force` sobre esa rama.
 
-Después de confirmar el push:
+Después de confirmar el push, salvo durante una fase con una excepción de
+retención aprobada:
 
 ```powershell
 git branch -d <nombre-rama>
 git push origin --delete <nombre-rama>
 ```
+
+### 7.1 Excepción de retención para la Fase 2
+
+Por decisión del propietario, las ramas creadas durante la Fase 2 se
+conservarán localmente y en `origin` después de integrarse. El objetivo es
+mantener una referencia navegable de los incrementos y facilitar comparaciones
+si posteriormente se exploran otros proveedores o diseños de identidad.
+
+Esta excepción se rige por las siguientes reglas:
+
+- no ejecutar `git branch -d` ni `git push origin --delete` sobre ramas de la
+  Fase 2 al terminar su merge;
+- una rama integrada queda congelada como referencia histórica y no recibe
+  commits nuevos;
+- cualquier corrección o alternativa nace en una rama nueva desde el `main`
+  vigente;
+- `main` continúa siendo la única fuente del estado aprobado y las etiquetas
+  identifican sus hitos verificables;
+- una rama experimental no representa una decisión aceptada mientras su cambio
+  no haya superado la puerta de calidad y sido integrado en `main`;
+- no se reescribirán ni forzarán las ramas retenidas;
+- su eventual eliminación solo podrá decidirse de forma explícita en la
+  revisión de salida de la Fase 2 o en una revisión posterior.
+
+La retención no reemplaza las ADR ni las etiquetas: una rama conserva código e
+historia; una ADR explica por qué se tomó una decisión y una etiqueta señala el
+commit exacto aprobado.
 
 ## 8. Etiquetas de hitos
 

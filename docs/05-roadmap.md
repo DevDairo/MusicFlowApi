@@ -1,8 +1,8 @@
 # Hoja de ruta por fases
 
 **Estado:** Vigente
-**Versión:** 0.2
-**Fecha:** 2026-08-12
+**Versión:** 0.3
+**Fecha:** 2026-08-13
 
 ## Principio de avance
 
@@ -58,6 +58,12 @@ GitHub Actions queda aplazado por decisión del propietario mientras adquiere ex
 ## Fase 2 — Identidad y autorización
 
 **Objetivo:** establecer la frontera de confianza antes de aceptar trabajos.
+
+Decisión de entrada aprobada: Keycloak autohospedado será el proveedor OIDC
+inicial. Se introducirá por incrementos: diseño y amenazas, runtime privado,
+publicación OIDC restringida, cliente Tauri y finalmente validación/autorización
+en la API. Las ramas de esta fase se conservarán como referencias congeladas
+después del merge conforme al flujo manual de control de versiones.
 
 Entregables:
 

@@ -1,8 +1,8 @@
 # Seguridad y cumplimiento
 
-**Estado:** Borrador inicial  
-**Versión:** 0.1  
-**Fecha:** 2026-08-12
+**Estado:** Borrador vigente
+**Versión:** 0.2
+**Fecha:** 2026-08-13
 
 ## 1. Objetivo
 
@@ -48,6 +48,23 @@ La API validará firma, emisor, audiencia, expiración y claims requeridos. La a
 | XSS en WebView | Metadatos renderizados como HTML | Escape por defecto, CSP, sin HTML arbitrario y capacidades Tauri mínimas. |
 | Supply chain | Binario o paquete comprometido | Versiones fijadas, lockfiles, SBOM futura, escaneo y actualización controlada. |
 | Fuga de artefactos | URL predecible o volumen expuesto | Descarga autenticada, autorización, identificadores no enumerables y expiración. |
+
+### 4.1 Amenazas de identidad para Keycloak
+
+| Amenaza | Impacto | Control previsto |
+|---|---|---|
+| Intercepción del código OIDC | Otra aplicación intenta canjear el código entregado al loopback | Navegador externo, listener iniciado antes del login, PKCE S256, `state`, `nonce`, timeout y uso único. |
+| Secuestro del callback | Un proceso ocupa el puerto o manipula `localhost` | Puerto efímero sobre la IP literal `127.0.0.1`; fallo seguro si no se puede enlazar; nunca usar `localhost` ni aceptar una ruta distinta. |
+| Confusión de token | Se presenta un ID token, token de otro realm, audiencia o algoritmo | Validar access token, firma, `typ`, algoritmo permitido, issuer exacto, audiencia, tiempo y claims obligatorios. |
+| Robo de refresh token | XSS, malware o logs obtienen una sesión persistente | Token fuera de React, almacén seguro del SO, rotación/revocación, redacción de logs y access tokens cortos. |
+| Escalada horizontal | Un usuario autenticado solicita recursos de otra identidad | UUID interno y verificación de propietario en cada consulta/caso de uso; pruebas negativas con dos usuarios. |
+| Identidad por dato mutable | Cambio o reutilización de correo mezcla propietarios | Clave única interna por `(issuer, subject)`; el correo solo es un atributo informativo. |
+| Exposición administrativa | Internet alcanza `/admin/`, el realm `master`, health o métricas | Gateway con allowlist de paths, administración enlazada a `127.0.0.1`, realm `master` no público y pruebas HTTP negativas. |
+| Suplantación de proxy/host | Headers manipulados generan issuer, redirects o direcciones falsas | Hostname público fijo, proxy headers explícitos, red privada y confianza limitada al gateway. |
+| Fuerza bruta o credential stuffing | Compromiso de cuentas o agotamiento del servicio | Registro público deshabilitado inicialmente, protecciones de Keycloak, rate limiting en el perímetro, MFA administrativo y auditoría. |
+| Claves JWKS rotadas o proveedor caído | Tokens nuevos no validan o no se pueden iniciar sesiones | Caché JWKS acotada, refresco ante `kid` desconocido, timeouts, fallo cerrado y runbook de disponibilidad/rotación. |
+| Configuración no reproducible | Cambios manuales introducen drift o debilitan PKCE | Exportación sanitizada, configuración versionada, checklist de consola, revisión de diff y prueba desde volumen nuevo. |
+| Base o backup de identidad expuesto | Pérdida de credenciales y datos personales | PostgreSQL aislado sin puerto, secretos fuera de Git, backups cifrados, acceso mínimo y restauración probada. |
 
 ## 5. Validación de URL y proveedor
 
