@@ -2,7 +2,7 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 1 — incremento 3 aprobado; cierre pendiente de merge y etiqueta**
+> Estado: **Fase 1 — incremento 3 aprobado**
 > Versión documental: **0.6.0**
 > Fecha de referencia: **2026-08-13**
 
@@ -56,7 +56,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Estado de implementación
 
-La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. El tercero fue validado el 2026-08-13: la ruta restringida `https://api.kontora-pos.store/health/live` funciona mediante Cloudflare Tunnel y el cliente instalado consulta ese contrato con mínimo privilegio, presenta un error controlado si la API se detiene y se recupera sin reiniciarse cuando vuelve a estar disponible. El cierre formal de la Fase 1 queda pendiente únicamente del merge y la etiqueta de esta rama. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
+La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. El tercero fue validado el 2026-08-13: la ruta restringida `https://api.kontora-pos.store/health/live` funciona mediante Cloudflare Tunnel y el cliente instalado consulta ese contrato con mínimo privilegio, presenta un error controlado si la API se detiene y se recupera sin reiniciarse cuando vuelve a estar disponible. La integración y etiqueta de este incremento completan los entregables previstos para la Fase 1; la Fase 2 no comienza en este cambio. La integración continua con GitHub Actions fue aplazada por decisión del propietario; mientras tanto, cada rama debe superar una puerta de calidad manual y documentada antes del merge. Aún no se incluyen autenticación, trabajos, `yt-dlp` ni FFmpeg.
 
 ## Puerta de calidad del incremento 1
 

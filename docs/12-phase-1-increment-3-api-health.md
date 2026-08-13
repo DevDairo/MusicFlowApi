@@ -1,6 +1,6 @@
 # Fase 1 — incremento 3: cliente de salud de la API
 
-**Estado:** Aprobado; merge y etiqueta pendientes
+**Estado:** Aprobado
 
 **Versión:** 0.3
 
@@ -141,7 +141,7 @@ Durante la primera prueba instalada, el adaptador falló porque `connectTimeout`
 5. Recuperar el origen con `docker compose --profile tunnel start api`, esperar que la ruta pública responda y repetir la consulta; debe volver a **API disponible**.
 6. Reabrir y desinstalar el cliente para completar la misma puerta de instalación del incremento anterior.
 
-Los seis pasos fueron aprobados por el propietario el 2026-08-13. No se iniciará la siguiente fase hasta integrar esta rama en `main`, etiquetar el incremento y verificar el estado limpio del repositorio.
+Los seis pasos fueron aprobados por el propietario el 2026-08-13. La integración en `main`, la etiqueta del incremento y la verificación del repositorio limpio son controles obligatorios de cierre antes de iniciar la siguiente fase.
 
 ## 12. Referencias
 
