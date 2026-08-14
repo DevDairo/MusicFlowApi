@@ -4,7 +4,7 @@
 
 Estado técnico: **verificación automatizada superada el 14 de agosto de 2026**.
 
-Estado de la puerta: **pendiente de validación manual de revocación**.
+Estado de la puerta: **aprobada el 14 de agosto de 2026**.
 
 Este incremento cierra la brecha detectada al revisar la puerta global de la
 Fase 2. La identidad y la autorización del incremento 5 funcionaban, pero aún
@@ -193,7 +193,21 @@ La integración a `main` requiere:
 - [x] política negativa entre dos usuarios;
 - [x] modelo de amenazas y configuración actualizados;
 - [x] ningún secreto de servidor distribuido en Tauri;
-- [ ] revocación y logout validados manualmente con una cuenta beta.
+- [x] revocación y logout validados manualmente con una cuenta beta.
+
+### Evidencia manual de revocación
+
+La primera comprobación deshabilitó la cuenta sin cerrar sus sesiones. Keycloak
+rechazó login y refresh mientras el usuario estuvo deshabilitado, pero al
+reactivarlo la sesión todavía existente pudo volver a renovarse. Esto confirmó
+la diferencia entre suspender temporalmente una cuenta y revocar su sesión; no
+fue un efecto del access token de diez minutos después de cerrar el proceso.
+
+La prueba definitiva mantuvo al cliente sin cooperar y ejecutó `Logout all
+sessions` desde Keycloak antes de deshabilitar la cuenta. MusicFlow exigió una
+autenticación nueva y continuó exigiéndola después de reactivar el usuario. La
+sesión anterior no se restauró. El flujo de revocación y el riesgo residual de
+JWT quedan aprobados.
 
 El trabajo vive en `feat/phase-2-security-exit-controls`. La rama se conservará
 localmente y en `origin` después del merge, de acuerdo con el flujo de la

@@ -2,7 +2,7 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 2 — cierre de seguridad en validación**
+> Estado: **Fase 2 — aprobada; Fase 3 preparada para diseño**
 > Versión documental: **0.11.0**
 > Fecha de referencia: **2026-08-14**
 
@@ -78,8 +78,8 @@ corrección responsive del formulario web fue aprobada visualmente por el
 propietario. El incremento 5 valida JWT en la API, resuelve una identidad
 interna estable y aplica una política reutilizable de propiedad. El incremento
 6 añade rate limiting por origen e identidad y eventos de auditoría seguros;
-su verificación automatizada está aprobada y solo resta la prueba manual de
-revocación. El alta de otros usuarios es manual durante la beta y la invitación
+su verificación automatizada y la revocación manual están aprobadas. El alta de
+otros usuarios es manual durante la beta y la invitación
 automatizada queda documentada como pendiente. Durante esta fase, las ramas
 integradas se conservarán congeladas localmente y en `origin`. GitHub Actions
 permanece aplazado y la puerta de calidad manual sigue siendo obligatoria. Aún

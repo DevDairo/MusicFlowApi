@@ -67,7 +67,9 @@ después del merge conforme al flujo manual de control de versiones.
 
 La revisión de salida detectó un sexto incremento acotado para añadir rate
 limiting inicial, completar eventos de auditoría y validar revocación. La Fase 3
-solo comenzará después de aprobar esa prueba manual.
+solo comenzará después de aprobar esa prueba manual. La prueba fue aprobada el
+14 de agosto de 2026: cerrar todas las sesiones en Keycloak impidió restaurar el
+refresh token aun después de reactivar la cuenta.
 
 Excepción registrada: durante el desarrollo y la beta privada pequeña, el alta
 de usuarios será manual y controlada desde Keycloak. La invitación automatizada
