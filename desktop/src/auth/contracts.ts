@@ -1,4 +1,5 @@
 export type AuthenticatedUser = Readonly<{
+  id: string;
   subject: string;
   username: string;
   displayName: string;

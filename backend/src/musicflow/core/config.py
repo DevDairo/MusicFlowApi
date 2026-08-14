@@ -4,8 +4,9 @@ from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Self
+from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
@@ -40,8 +41,46 @@ class Settings(BaseSettings):
     db_password: SecretStr
     db_connect_timeout_seconds: float = Field(default=3.0, gt=0, le=30)
 
+    oidc_issuer: str = Field(min_length=1, max_length=512)
+    oidc_audience: str = Field(min_length=1, max_length=255)
+    oidc_jwks_url: str = Field(min_length=1, max_length=512)
+    oidc_jwks_cache_seconds: int = Field(default=300, ge=30, le=3600)
+    oidc_clock_skew_seconds: int = Field(default=30, ge=0, le=120)
+
     worker_heartbeat_seconds: float = Field(default=5.0, ge=1, le=60)
     worker_health_file: Path = DEFAULT_WORKER_HEALTH_FILE
+
+    @field_validator("oidc_issuer")
+    @classmethod
+    def validate_oidc_issuer(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or parsed.username
+            or parsed.password
+            or parsed.query
+            or parsed.fragment
+            or value.endswith("/")
+        ):
+            raise ValueError("OIDC issuer must be an absolute URL without credentials or suffixes.")
+        return value
+
+    @field_validator("oidc_jwks_url")
+    @classmethod
+    def validate_oidc_jwks_url(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or parsed.username
+            or parsed.password
+            or parsed.query
+            or parsed.fragment
+            or not parsed.path.endswith("/protocol/openid-connect/certs")
+        ):
+            raise ValueError("OIDC JWKS URL must be an absolute Keycloak certs endpoint.")
+        return value
 
     @model_validator(mode="after")
     def reject_placeholder_production_secret(self) -> Self:
@@ -50,6 +89,12 @@ class Settings(BaseSettings):
             password.startswith("replace-with-") or len(password) < MIN_PRODUCTION_PASSWORD_LENGTH
         ):
             raise ValueError("A strong database password is required in production.")
+        insecure_production_issuer = (
+            self.environment is Environment.PRODUCTION
+            and urlsplit(self.oidc_issuer).scheme != "https"
+        )
+        if insecure_production_issuer:
+            raise ValueError("An HTTPS OIDC issuer is required in production.")
         return self
 
     @property

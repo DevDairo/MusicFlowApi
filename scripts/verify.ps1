@@ -62,7 +62,7 @@ try {
         throw "El worker no debe publicar puertos."
     }
 
-    Invoke-Compose build api worker tests
+    Invoke-Compose build api worker migrate tests
     $apiUser = (Invoke-Compose run --rm --no-deps api id -u | Out-String).Trim()
     $workerUser = (Invoke-Compose run --rm --no-deps worker id -u | Out-String).Trim()
     if ($apiUser -ne "10001" -or $workerUser -ne "10001") {

@@ -24,6 +24,7 @@ use tauri_plugin_opener::OpenerExt;
 use zeroize::Zeroizing;
 
 const ISSUER: &str = "https://auth.kontora-pos.store/realms/musicflow";
+const API_BASE_URL: &str = "https://api.kontora-pos.store";
 const CLIENT_ID: &str = "musicflow-desktop";
 const CALLBACK_PATH: &str = "/";
 const LOGIN_TIMEOUT: Duration = Duration::from_secs(180);
@@ -33,6 +34,7 @@ const KEYRING_ACCOUNT: &str = "oidc-refresh-token";
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthenticatedUser {
+    id: String,
     subject: String,
     username: String,
     display_name: String,
@@ -146,6 +148,11 @@ struct UserInfoResponse {
     email_verified: bool,
 }
 
+#[derive(Debug, Deserialize)]
+struct CurrentIdentityResponse {
+    id: String,
+}
+
 fn http_client() -> Result<reqwest::blocking::Client, AuthCommandError> {
     reqwest::blocking::ClientBuilder::new()
         .redirect(reqwest::redirect::Policy::none())
@@ -161,6 +168,77 @@ fn discover_provider(
     let issuer =
         IssuerUrl::new(ISSUER.to_owned()).map_err(|_| AuthCommandError::configuration())?;
     CoreProviderMetadata::discover(&issuer, client).map_err(|_| AuthCommandError::connection())
+}
+
+fn current_identity_from_response(
+    status: reqwest::StatusCode,
+    body: &str,
+) -> Result<CurrentIdentityResponse, AuthCommandError> {
+    if status == reqwest::StatusCode::UNAUTHORIZED || status == reqwest::StatusCode::FORBIDDEN {
+        return Err(AuthCommandError::new(
+            "api_token_rejected",
+            "La API no acepto la sesion de identidad. Inicia sesion nuevamente.",
+            false,
+        ));
+    }
+    if status == reqwest::StatusCode::SERVICE_UNAVAILABLE {
+        return Err(AuthCommandError::new(
+            "api_unavailable",
+            "MusicFlow no puede validar tu cuenta en este momento.",
+            true,
+        ));
+    }
+    if !status.is_success() {
+        return Err(AuthCommandError::new(
+            "api_unexpected_response",
+            "MusicFlow respondio de forma inesperada al validar tu cuenta.",
+            true,
+        ));
+    }
+
+    let identity: CurrentIdentityResponse = serde_json::from_str(body).map_err(|_| {
+        AuthCommandError::new(
+            "api_contract_invalid",
+            "MusicFlow devolvio una identidad que no cumple el contrato esperado.",
+            true,
+        )
+    })?;
+    if identity.id.is_empty() || identity.id.len() > 64 {
+        return Err(AuthCommandError::new(
+            "api_contract_invalid",
+            "MusicFlow devolvio una identidad que no cumple el contrato esperado.",
+            true,
+        ));
+    }
+
+    Ok(identity)
+}
+
+fn resolve_current_identity(
+    http: &reqwest::blocking::Client,
+    access_token: &str,
+) -> Result<CurrentIdentityResponse, AuthCommandError> {
+    let response = http
+        .get(format!("{API_BASE_URL}/v1/me"))
+        .bearer_auth(access_token)
+        .send()
+        .map_err(|_| {
+            AuthCommandError::new(
+                "api_unavailable",
+                "No fue posible conectar con la API de MusicFlow.",
+                true,
+            )
+        })?;
+    let status = response.status();
+    let body = response.text().map_err(|_| {
+        AuthCommandError::new(
+            "api_contract_invalid",
+            "MusicFlow devolvio una respuesta que no se pudo interpretar.",
+            true,
+        )
+    })?;
+
+    current_identity_from_response(status, &body)
 }
 
 fn credential_entry() -> Result<Entry, AuthCommandError> {
@@ -230,6 +308,7 @@ fn session_from_token_response(
             false,
         ));
     }
+    let internal_identity = resolve_current_identity(http, token_response.access_token().secret())?;
     let username = userinfo
         .preferred_username
         .unwrap_or_else(|| userinfo.sub.clone());
@@ -240,6 +319,7 @@ fn session_from_token_response(
 
     Ok(NativeSession {
         user: AuthenticatedUser {
+            id: internal_identity.id,
             subject: userinfo.sub,
             username,
             display_name,
@@ -255,7 +335,7 @@ fn browser_response(success: bool) -> String {
     let (title, message, accent) = if success {
         (
             "Retorno recibido",
-            "Vuelve a MusicFlow mientras validamos tu sesion de forma segura.",
+            "MusicFlow recibio el retorno. Ya puedes cerrar esta pestana y continuar en la aplicacion.",
             "#58e0b5",
         )
     } else {
@@ -716,9 +796,41 @@ mod tests {
 
         assert!(response.contains("Cache-Control: no-store"));
         assert!(response.contains("Content-Security-Policy: default-src 'none'"));
+        assert!(response.contains("Ya puedes cerrar esta pestana"));
+        assert!(!response.contains("musicflow://"));
+        assert!(!response.contains("<script"));
+        assert!(!response.contains("window.close"));
         assert!(!response.contains("access_token"));
         assert!(!response.contains("refresh_token"));
         assert!(!response.contains("authorization_code"));
+    }
+
+    #[test]
+    fn api_identity_contract_accepts_a_stable_identifier() {
+        let identity = current_identity_from_response(
+            reqwest::StatusCode::OK,
+            r#"{"id":"8f5a6eb8-68e0-4ddd-9660-0c82a32f8af5"}"#,
+        )
+        .expect("a valid identity contract must be accepted");
+
+        assert_eq!(identity.id, "8f5a6eb8-68e0-4ddd-9660-0c82a32f8af5");
+    }
+
+    #[test]
+    fn api_identity_contract_rejects_an_unauthorized_token() {
+        let error = current_identity_from_response(reqwest::StatusCode::UNAUTHORIZED, "")
+            .expect_err("an unauthorized token must be rejected");
+
+        assert_eq!(error.code, "api_token_rejected");
+        assert!(!error.retryable);
+    }
+
+    #[test]
+    fn api_identity_contract_rejects_invalid_json() {
+        let error = current_identity_from_response(reqwest::StatusCode::OK, "not-json")
+            .expect_err("an invalid API contract must be rejected");
+
+        assert_eq!(error.code, "api_contract_invalid");
     }
 
     #[test]
