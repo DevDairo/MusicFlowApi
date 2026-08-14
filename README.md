@@ -49,6 +49,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Fase 2 — incremento 3](docs/16-phase-2-increment-3-oidc-publication.md)           | Publicación OIDC restringida, proxy confiable, migración y matriz pública.          |
 | [Fase 2 — incremento 4](docs/17-phase-2-increment-4-desktop-login.md)              | Login Tauri con PKCE, sesión protegida, cuenta beta, tema y validación manual.      |
 | [Invitaciones de beta](docs/18-beta-invitation-runbook.md)                         | Alta manual controlada, revocación, límites y contrato de automatización pendiente. |
+| [Fase 2 — incremento 5](docs/19-phase-2-increment-5-api-jwt-authorization.md)      | Diseño de validación JWT, identidad interna y autorización por propietario.         |
 | [Registro de decisiones](docs/adr/README.md)                                       | Decisiones arquitectónicas y su estado.                                             |
 
 ## Decisiones iniciales

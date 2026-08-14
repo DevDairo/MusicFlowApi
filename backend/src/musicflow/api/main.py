@@ -9,9 +9,11 @@ from fastapi import FastAPI
 from musicflow import __version__
 from musicflow.api.middleware import correlation_middleware
 from musicflow.api.routes.health import router as health_router
+from musicflow.api.routes.identity import router as identity_router
 from musicflow.core.config import Settings, get_settings
 from musicflow.core.logging import configure_logging, log_event
 from musicflow.db.engine import create_database_engine
+from musicflow.security.tokens import AccessTokenVerifier
 
 _logger = logging.getLogger(__name__)
 
@@ -24,6 +26,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         configure_logging(resolved_settings)
         app.state.settings = resolved_settings
         app.state.database_engine = create_database_engine(resolved_settings)
+        app.state.access_token_verifier = AccessTokenVerifier(resolved_settings)
         log_event(_logger, logging.INFO, "api_started", version=__version__)
         try:
             yield
@@ -40,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     application.middleware("http")(correlation_middleware)
     application.include_router(health_router)
+    application.include_router(identity_router)
     return application
 
 

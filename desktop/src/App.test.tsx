@@ -55,6 +55,7 @@ describe("interfaz de acceso", () => {
       {
         kind: "signedIn",
         user: {
+          id: "8f5a6eb8-68e0-4ddd-9660-0c82a32f8af5",
           subject: "user-1",
           username: "demo",
           displayName: "Dairo Demo",

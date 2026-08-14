@@ -18,6 +18,13 @@ def settings() -> Settings:
         db_user="musicflow",
         db_password=SecretStr("test-password-not-for-production"),
         db_connect_timeout_seconds=1,
+        oidc_issuer="https://identity.test/realms/musicflow",
+        oidc_audience="musicflow-api",
+        oidc_jwks_url=(
+            "http://keycloak-gateway:8080/realms/musicflow/protocol/openid-connect/certs"
+        ),
+        oidc_jwks_cache_seconds=300,
+        oidc_clock_skew_seconds=30,
         worker_heartbeat_seconds=5,
     )
 

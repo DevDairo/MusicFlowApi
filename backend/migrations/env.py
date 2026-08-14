@@ -10,6 +10,9 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from musicflow.core.config import get_settings
 from musicflow.db.base import metadata
+from musicflow.db.identities import user_identities
+
+assert user_identities.name == "user_identities"
 
 config = context.config
 

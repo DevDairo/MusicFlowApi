@@ -26,4 +26,33 @@ def test_production_rejects_placeholder_password() -> None:
             db_name="musicflow",
             db_user="musicflow",
             db_password=SecretStr("replace-with-a-password"),
+            oidc_issuer="https://identity.example/realms/musicflow",
+            oidc_audience="musicflow-api",
+            oidc_jwks_url=(
+                "http://keycloak-gateway:8080/realms/musicflow/protocol/openid-connect/certs"
+            ),
         )
+
+
+def test_production_rejects_non_https_oidc_issuer() -> None:
+    with pytest.raises(ValidationError):
+        Settings(
+            service_name="api",
+            environment=Environment.PRODUCTION,
+            db_host="postgres",
+            db_name="musicflow",
+            db_user="musicflow",
+            db_password=SecretStr("a-strong-production-password-123456"),
+            oidc_issuer="http://identity.example/realms/musicflow",
+            oidc_audience="musicflow-api",
+            oidc_jwks_url=(
+                "http://keycloak-gateway:8080/realms/musicflow/protocol/openid-connect/certs"
+            ),
+        )
+
+
+def test_oidc_jwks_url_can_use_the_private_identity_network(settings: Settings) -> None:
+    assert settings.oidc_issuer == "https://identity.test/realms/musicflow"
+    assert settings.oidc_jwks_url == (
+        "http://keycloak-gateway:8080/realms/musicflow/protocol/openid-connect/certs"
+    )
