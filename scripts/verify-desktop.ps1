@@ -110,6 +110,12 @@ try {
         --tag $qualityImage `
         $desktopRoot
 
+    Write-Host "Ejecutando formato, compilacion y pruebas Rust dentro de Docker..." -ForegroundColor Cyan
+    Invoke-Docker build `
+        --file $dockerfile `
+        --target quality-rust `
+        $desktopRoot
+
     if ($SkipInstaller) {
         Write-Host "Calidad del cliente verificada; instalador omitido por parametro." -ForegroundColor Green
         return

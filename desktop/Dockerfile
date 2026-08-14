@@ -23,11 +23,8 @@ WORKDIR /workspace/src-tauri
 COPY src-tauri/Cargo.toml src-tauri/Cargo.lock ./
 COPY src-tauri/build.rs ./
 COPY src-tauri/src ./src
-RUN cargo metadata --locked --format-version 1 > /dev/null
-
-FROM scratch AS lockfiles
-COPY --from=javascript-lock /workspace/pnpm-lock.yaml /pnpm-lock.yaml
-COPY --from=rust-lock /workspace/src-tauri/Cargo.lock /src-tauri/Cargo.lock
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    cargo metadata --locked --no-deps --format-version 1 > /dev/null
 
 FROM ${NODE_IMAGE} AS javascript-dependencies
 ARG PNPM_VERSION
@@ -36,12 +33,45 @@ WORKDIR /workspace
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
+FROM javascript-dependencies AS icon-builder
+COPY src-tauri/app-icon.svg ./src-tauri/app-icon.svg
+RUN pnpm tauri icon src-tauri/app-icon.svg --output src-tauri/icons
+
+FROM ${RUST_IMAGE} AS rust-quality
+RUN rustup component add rustfmt
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        build-essential \
+        libayatana-appindicator3-dev \
+        librsvg2-dev \
+        libssl-dev \
+        libwebkit2gtk-4.1-dev \
+        libxdo-dev \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /workspace/src-tauri
+COPY src-tauri/Cargo.toml src-tauri/Cargo.lock ./
+COPY src-tauri/build.rs ./
+COPY src-tauri/tauri.conf.json ./
+COPY src-tauri/capabilities ./capabilities
+COPY --from=icon-builder /workspace/src-tauri/icons ./icons
+COPY src-tauri/src ./src
+RUN cargo fmt -- --check
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,target=/workspace/src-tauri/target,sharing=locked \
+    cargo test --locked
+
+FROM scratch AS lockfiles
+COPY --from=javascript-lock /workspace/pnpm-lock.yaml /pnpm-lock.yaml
+COPY --from=rust-lock /workspace/src-tauri/Cargo.lock /src-tauri/Cargo.lock
+
 FROM javascript-dependencies AS quality
 COPY . .
 RUN pnpm format:check
 RUN pnpm lint
 RUN pnpm test
 RUN pnpm build
+
+FROM rust-quality AS quality-rust
 
 FROM ${NODE_IMAGE} AS node-runtime
 
@@ -64,13 +94,17 @@ WORKDIR /workspace
 COPY package.json pnpm-lock.yaml ./
 COPY --from=javascript-dependencies /workspace/node_modules ./node_modules
 COPY . .
-RUN pnpm tauri icon src-tauri/app-icon.svg --output src-tauri/icons
+COPY --from=icon-builder /workspace/src-tauri/icons ./src-tauri/icons
 RUN cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
-RUN pnpm tauri build \
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,id=musicflow-windows-x86_64-target,target=/workspace/src-tauri/target/x86_64-pc-windows-msvc,sharing=locked \
+    pnpm tauri build \
     --runner cargo-xwin \
     --target x86_64-pc-windows-msvc \
     --bundles nsis \
-    -- --locked
+    -- --locked \
+    && mkdir -p /workspace/artifact \
+    && cp /workspace/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-setup.exe /workspace/artifact/
 
 FROM scratch AS artifact
-COPY --from=windows-builder /workspace/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/ /
+COPY --from=windows-builder /workspace/artifact/ /

@@ -1,8 +1,8 @@
 # Hoja de ruta por fases
 
 **Estado:** Vigente
-**Versión:** 0.3
-**Fecha:** 2026-08-13
+**Versión:** 0.4
+**Fecha:** 2026-08-14
 
 ## Principio de avance
 
@@ -64,6 +64,13 @@ inicial. Se introducirá por incrementos: diseño y amenazas, runtime privado,
 publicación OIDC restringida, cliente Tauri y finalmente validación/autorización
 en la API. Las ramas de esta fase se conservarán como referencias congeladas
 después del merge conforme al flujo manual de control de versiones.
+
+Excepción registrada: durante el desarrollo y la beta privada pequeña, el alta
+de usuarios será manual y controlada desde Keycloak. La invitación automatizada
+no bloquea la validación JWT de la API, pero deberá incorporar SMTP, verificación
+de correo, tokens de un solo uso, expiración, auditoría y controles antiabuso
+antes de ampliar la beta. El procedimiento y su puerta están documentados en
+`18-beta-invitation-runbook.md`.
 
 Entregables:
 

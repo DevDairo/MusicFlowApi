@@ -18,6 +18,7 @@ ENV KC_DB=postgres \
 
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 COPY --chown=1000:0 realm-musicflow.json /opt/keycloak/data/import/realm-musicflow.json
+COPY --chown=1000:0 themes/musicflow/ /opt/keycloak/themes/musicflow/
 COPY --chown=1000:0 --chmod=0555 start-musicflow-keycloak.sh /opt/keycloak/bin/start-musicflow-keycloak.sh
 
 ENTRYPOINT ["/opt/keycloak/bin/start-musicflow-keycloak.sh"]
