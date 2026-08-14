@@ -47,6 +47,13 @@ class Settings(BaseSettings):
     oidc_jwks_cache_seconds: int = Field(default=300, ge=30, le=3600)
     oidc_clock_skew_seconds: int = Field(default=30, ge=0, le=120)
 
+    rate_limit_enabled: bool = True
+    rate_limit_window_seconds: int = Field(default=60, ge=1, le=3600)
+    rate_limit_origin_requests: int = Field(default=120, ge=1, le=10_000)
+    rate_limit_identity_requests: int = Field(default=60, ge=1, le=10_000)
+    rate_limit_max_keys: int = Field(default=10_000, ge=100, le=100_000)
+    trust_cloudflare_connecting_ip: bool = False
+
     worker_heartbeat_seconds: float = Field(default=5.0, ge=1, le=60)
     worker_health_file: Path = DEFAULT_WORKER_HEALTH_FILE
 
