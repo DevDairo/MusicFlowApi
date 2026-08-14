@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 2 — publicación OIDC aprobada**
-> Versión documental: **0.9.0**
+> Estado: **Fase 2 — login nativo en validación**
+> Versión documental: **0.10.0**
 > Fecha de referencia: **2026-08-13**
 
 ## Propósito
@@ -28,26 +28,28 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 ## Documentación
 
-| Documento | Propósito |
-|---|---|
-| [Visión y alcance](docs/00-vision-and-scope.md) | Problema, objetivos, alcance y límites del producto. |
-| [Especificación de requisitos](docs/01-software-requirements.md) | Requisitos funcionales, no funcionales y criterios de aceptación. |
-| [Arquitectura inicial](docs/02-architecture.md) | Componentes, responsabilidades, flujos y despliegue. |
-| [Seguridad y cumplimiento](docs/03-security-and-compliance.md) | Modelo de amenazas, controles y tratamiento del error 403. |
-| [Estrategia de pruebas](docs/04-testing-strategy.md) | Niveles de prueba y puertas de calidad. |
-| [Hoja de ruta](docs/05-roadmap.md) | Fases de desarrollo y condiciones para avanzar. |
-| [Proceso de desarrollo](docs/06-development-process.md) | Ciclo de vida, Definition of Done y gestión de cambios. |
-| [Diagnóstico del beta](docs/07-beta-diagnostic.md) | Hallazgos del código inicial y estrategia de migración. |
-| [Revisión de salida de Fase 0](docs/08-phase-0-exit-review.md) | Evidencia de aprobación y cierre de la fase. |
-| [Fase 1 — incremento 1](docs/09-phase-1-increment-1.md) | Alcance, verificaciones y evidencia del esqueleto técnico. |
-| [Flujo manual de control de versiones](docs/10-manual-version-control-workflow.md) | Ramas, validación, merge, etiquetas y recuperación. |
-| [Fase 1 — incremento 2](docs/11-phase-1-increment-2-tauri-spike.md) | Spike Tauri, toolchain Docker y puerta de aceptación del instalador. |
-| [Fase 1 — incremento 3](docs/12-phase-1-increment-3-api-health.md) | Configuración segura y consulta limitada al health de la API. |
-| [Runbook de Cloudflare Tunnel](docs/13-cloudflare-tunnel-runbook.md) | Inicio, verificación, diagnóstico, detención y rotación del conector. |
-| [Fase 2 — fundamento Keycloak](docs/14-phase-2-keycloak-foundation.md) | Decisión, frontera de confianza, incrementos, amenazas y pruebas de identidad. |
-| [Fase 2 — incremento 2](docs/15-phase-2-increment-2-keycloak-runtime.md) | Runtime privado de Keycloak, operación, seguridad, verificaciones e incidencias. |
-| [Fase 2 — incremento 3](docs/16-phase-2-increment-3-oidc-publication.md) | Publicación OIDC restringida, proxy confiable, migración y matriz pública. |
-| [Registro de decisiones](docs/adr/README.md) | Decisiones arquitectónicas y su estado. |
+| Documento                                                                          | Propósito                                                                           |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [Visión y alcance](docs/00-vision-and-scope.md)                                    | Problema, objetivos, alcance y límites del producto.                                |
+| [Especificación de requisitos](docs/01-software-requirements.md)                   | Requisitos funcionales, no funcionales y criterios de aceptación.                   |
+| [Arquitectura inicial](docs/02-architecture.md)                                    | Componentes, responsabilidades, flujos y despliegue.                                |
+| [Seguridad y cumplimiento](docs/03-security-and-compliance.md)                     | Modelo de amenazas, controles y tratamiento del error 403.                          |
+| [Estrategia de pruebas](docs/04-testing-strategy.md)                               | Niveles de prueba y puertas de calidad.                                             |
+| [Hoja de ruta](docs/05-roadmap.md)                                                 | Fases de desarrollo y condiciones para avanzar.                                     |
+| [Proceso de desarrollo](docs/06-development-process.md)                            | Ciclo de vida, Definition of Done y gestión de cambios.                             |
+| [Diagnóstico del beta](docs/07-beta-diagnostic.md)                                 | Hallazgos del código inicial y estrategia de migración.                             |
+| [Revisión de salida de Fase 0](docs/08-phase-0-exit-review.md)                     | Evidencia de aprobación y cierre de la fase.                                        |
+| [Fase 1 — incremento 1](docs/09-phase-1-increment-1.md)                            | Alcance, verificaciones y evidencia del esqueleto técnico.                          |
+| [Flujo manual de control de versiones](docs/10-manual-version-control-workflow.md) | Ramas, validación, merge, etiquetas y recuperación.                                 |
+| [Fase 1 — incremento 2](docs/11-phase-1-increment-2-tauri-spike.md)                | Spike Tauri, toolchain Docker y puerta de aceptación del instalador.                |
+| [Fase 1 — incremento 3](docs/12-phase-1-increment-3-api-health.md)                 | Configuración segura y consulta limitada al health de la API.                       |
+| [Runbook de Cloudflare Tunnel](docs/13-cloudflare-tunnel-runbook.md)               | Inicio, verificación, diagnóstico, detención y rotación del conector.               |
+| [Fase 2 — fundamento Keycloak](docs/14-phase-2-keycloak-foundation.md)             | Decisión, frontera de confianza, incrementos, amenazas y pruebas de identidad.      |
+| [Fase 2 — incremento 2](docs/15-phase-2-increment-2-keycloak-runtime.md)           | Runtime privado de Keycloak, operación, seguridad, verificaciones e incidencias.    |
+| [Fase 2 — incremento 3](docs/16-phase-2-increment-3-oidc-publication.md)           | Publicación OIDC restringida, proxy confiable, migración y matriz pública.          |
+| [Fase 2 — incremento 4](docs/17-phase-2-increment-4-desktop-login.md)              | Login Tauri con PKCE, sesión protegida, cuenta beta, tema y validación manual.      |
+| [Invitaciones de beta](docs/18-beta-invitation-runbook.md)                         | Alta manual controlada, revocación, límites y contrato de automatización pendiente. |
+| [Registro de decisiones](docs/adr/README.md)                                       | Decisiones arquitectónicas y su estado.                                             |
 
 ## Decisiones iniciales
 
@@ -64,10 +66,16 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 
 La Fase 0 y los tres incrementos técnicos de la Fase 1 fueron aprobados. La
 Fase 2 seleccionó Keycloak autohospedado como proveedor OIDC, implementó su
-runtime reproducible y verificó la publicación mínima en
+runtime reproducible, verificó la publicación mínima en
 `auth.kontora-pos.store`. Discovery, JWKS e inicio de login están disponibles;
 la administración, el realm `master`, health y métricas permanecen fuera de la
-frontera pública. Todavía no existe login en Tauri ni validación JWT en la API.
+frontera pública. El incremento 2.4 integra el login OIDC en Tauri, protege el
+refresh token con el almacén del sistema operativo y añade una cuenta beta y un
+tema de acceso. El login, callback y perfil fueron comprobados manualmente; la
+corrección responsive del formulario web fue aprobada visualmente por el
+propietario. El alta de otros usuarios es manual durante la beta y
+la invitación automatizada queda documentada como pendiente.
+La API todavía no valida JWT.
 Durante esta fase, las ramas integradas se
 conservarán congeladas localmente y en `origin`. GitHub Actions permanece
 aplazado y la puerta de calidad manual sigue siendo obligatoria. Aún no se

@@ -32,7 +32,8 @@ $secretFiles = @(
     "keycloak-bootstrap-admin-password",
     "keycloak-admin-password",
     "keycloak-verifier-client-secret",
-    "keycloak-publication-admin-client-secret"
+    "keycloak-publication-admin-client-secret",
+    "keycloak-beta-user-password"
 )
 
 foreach ($secretFile in $secretFiles) {
@@ -47,7 +48,14 @@ foreach ($secretFile in $secretFiles) {
         continue
     }
 
-    [System.IO.File]::WriteAllText($secretPath, (New-Base64UrlSecret), $utf8WithoutBom)
+    $secretValue = if ($secretFile -eq "keycloak-beta-user-password") {
+        "Aa1!" + (New-Base64UrlSecret)
+    }
+    else {
+        New-Base64UrlSecret
+    }
+    [System.IO.File]::WriteAllText($secretPath, $secretValue, $utf8WithoutBom)
+    $secretValue = $null
     Write-Host "Creado: .secrets/$secretFile" -ForegroundColor Green
 }
 

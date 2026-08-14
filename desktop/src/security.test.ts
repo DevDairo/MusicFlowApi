@@ -59,5 +59,7 @@ describe("frontera de seguridad Tauri", () => {
     expect(serializedPermissions).not.toContain("*");
     expect(serializedPermissions).not.toContain("/health/ready");
     expect(serializedPermissions).not.toContain("https://kontora-pos.store");
+    expect(serializedPermissions).not.toContain("auth.kontora-pos.store");
+    expect(serializedPermissions).not.toContain("opener");
   });
 });
