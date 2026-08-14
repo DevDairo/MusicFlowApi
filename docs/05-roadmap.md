@@ -97,6 +97,11 @@ Puerta de salida:
 
 **Objetivo:** validar el ciclo asíncrono sin depender aún del proveedor real.
 
+Estrategia de entrada propuesta: incremento 3.1 para contrato/API durable,
+incremento 3.2 para worker simulado y leases, e incremento 3.3 para recuperación,
+reintentos y métricas. El diseño detallado se mantiene en
+`21-phase-3-durable-job-foundation.md`.
+
 Entregables:
 
 - endpoints de creación, consulta y cancelación;

@@ -2,8 +2,8 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 2 — aprobada; Fase 3 preparada para diseño**
-> Versión documental: **0.11.0**
+> Estado: **Fase 2 — aprobada; Fase 3 en diseño**
+> Versión documental: **0.12.0**
 > Fecha de referencia: **2026-08-14**
 
 ## Propósito
@@ -51,6 +51,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Invitaciones de beta](docs/18-beta-invitation-runbook.md)                         | Alta manual controlada, revocación, límites y contrato de automatización pendiente. |
 | [Fase 2 — incremento 5](docs/19-phase-2-increment-5-api-jwt-authorization.md)      | Diseño de validación JWT, identidad interna y autorización por propietario.         |
 | [Fase 2 — incremento 6](docs/20-phase-2-increment-6-security-exit-controls.md)     | Rate limiting, auditoría segura, revocación y revisión de salida.                    |
+| [Fase 3 — fundamento durable](docs/21-phase-3-durable-job-foundation.md)           | Contrato, esquema, estados, leases, seguridad y estrategia incremental.              |
 | [Registro de decisiones](docs/adr/README.md)                                       | Decisiones arquitectónicas y su estado.                                             |
 
 ## Decisiones iniciales
