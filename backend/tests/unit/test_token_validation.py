@@ -98,6 +98,19 @@ def test_token_signed_by_another_key_is_rejected(settings: Settings, rsa_key_pai
         asyncio.run(verifier.verify(build_token(settings, private_key)))
 
 
+def test_expired_access_token_is_rejected(settings: Settings, rsa_key_pair) -> None:
+    private_key, public_key = rsa_key_pair
+    verifier = AccessTokenVerifier(settings, key_resolver=StaticKeyResolver(public_key))
+    expired_token = build_token(
+        settings,
+        private_key,
+        overrides={"exp": datetime.now(UTC) - timedelta(minutes=1)},
+    )
+
+    with pytest.raises(InvalidAccessTokenError):
+        asyncio.run(verifier.verify(expired_token))
+
+
 def test_excessively_long_token_is_rejected_before_key_resolution(settings: Settings) -> None:
     class FailingResolver:
         def get_signing_key_from_jwt(self, _token: str):

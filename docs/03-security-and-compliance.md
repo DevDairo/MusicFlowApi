@@ -66,6 +66,21 @@ La API validará firma, emisor, audiencia, expiración y claims requeridos. La a
 | Configuración no reproducible | Cambios manuales introducen drift o debilitan PKCE | Exportación sanitizada, configuración versionada, checklist de consola, revisión de diff y prueba desde volumen nuevo. |
 | Base o backup de identidad expuesto | Pérdida de credenciales y datos personales | PostgreSQL aislado sin puerto, secretos fuera de Git, backups cifrados, acceso mínimo y restauración probada. |
 
+### 4.2 Controles de identidad implementados en la Fase 2
+
+- El realm mantiene protección contra fuerza bruta y bloqueo temporal.
+- La API limita endpoints protegidos por origen antes de validar JWT y por UUID
+  interno después de autenticar.
+- `CF-Connecting-IP` solo se usa si contiene una IP válida; no se confía en
+  `X-Forwarded-For` y el valor no se registra.
+- El limitador es local y acotado para la instancia única actual. Antes de
+  ejecutar varias réplicas se deberá sustituir por estado distribuido.
+- Los JWT emitidos no tienen revocación instantánea. Deshabilitar la cuenta
+  bloquea nuevos tokens y el riesgo residual dura como máximo la vida del
+  access token actual.
+- Los eventos de seguridad contienen resultado, correlation ID y, cuando es
+  necesario, UUID internos; nunca tokens, contraseñas o subjects externos.
+
 ## 5. Validación de URL y proveedor
 
 - Admitir únicamente `https` y hosts explícitamente soportados.

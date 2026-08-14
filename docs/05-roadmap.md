@@ -65,6 +65,10 @@ publicación OIDC restringida, cliente Tauri y finalmente validación/autorizaci
 en la API. Las ramas de esta fase se conservarán como referencias congeladas
 después del merge conforme al flujo manual de control de versiones.
 
+La revisión de salida detectó un sexto incremento acotado para añadir rate
+limiting inicial, completar eventos de auditoría y validar revocación. La Fase 3
+solo comenzará después de aprobar esa prueba manual.
+
 Excepción registrada: durante el desarrollo y la beta privada pequeña, el alta
 de usuarios será manual y controlada desde Keycloak. La invitación automatizada
 no bloquea la validación JWT de la API, pero deberá incorporar SMTP, verificación

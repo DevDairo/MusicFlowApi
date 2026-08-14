@@ -13,6 +13,7 @@ from musicflow.api.routes.identity import router as identity_router
 from musicflow.core.config import Settings, get_settings
 from musicflow.core.logging import configure_logging, log_event
 from musicflow.db.engine import create_database_engine
+from musicflow.security.rate_limits import SlidingWindowRateLimiter
 from musicflow.security.tokens import AccessTokenVerifier
 
 _logger = logging.getLogger(__name__)
@@ -27,6 +28,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.settings = resolved_settings
         app.state.database_engine = create_database_engine(resolved_settings)
         app.state.access_token_verifier = AccessTokenVerifier(resolved_settings)
+        app.state.auth_origin_rate_limiter = SlidingWindowRateLimiter(
+            request_limit=resolved_settings.rate_limit_origin_requests,
+            window_seconds=resolved_settings.rate_limit_window_seconds,
+            max_keys=resolved_settings.rate_limit_max_keys,
+        )
+        app.state.auth_identity_rate_limiter = SlidingWindowRateLimiter(
+            request_limit=resolved_settings.rate_limit_identity_requests,
+            window_seconds=resolved_settings.rate_limit_window_seconds,
+            max_keys=resolved_settings.rate_limit_max_keys,
+        )
         log_event(_logger, logging.INFO, "api_started", version=__version__)
         try:
             yield

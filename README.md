@@ -2,9 +2,9 @@
 
 Aplicación de escritorio para solicitar, procesar y guardar audio con metadatos, diseñada inicialmente para Windows y preparada para evolucionar a macOS y Linux.
 
-> Estado: **Fase 2 — login nativo en validación**
-> Versión documental: **0.10.0**
-> Fecha de referencia: **2026-08-13**
+> Estado: **Fase 2 — cierre de seguridad en validación**
+> Versión documental: **0.11.0**
+> Fecha de referencia: **2026-08-14**
 
 ## Propósito
 
@@ -50,6 +50,7 @@ El MVP utilizará `yt-dlp` como integración inicial y FFmpeg/FFprobe para el pr
 | [Fase 2 — incremento 4](docs/17-phase-2-increment-4-desktop-login.md)              | Login Tauri con PKCE, sesión protegida, cuenta beta, tema y validación manual.      |
 | [Invitaciones de beta](docs/18-beta-invitation-runbook.md)                         | Alta manual controlada, revocación, límites y contrato de automatización pendiente. |
 | [Fase 2 — incremento 5](docs/19-phase-2-increment-5-api-jwt-authorization.md)      | Diseño de validación JWT, identidad interna y autorización por propietario.         |
+| [Fase 2 — incremento 6](docs/20-phase-2-increment-6-security-exit-controls.md)     | Rate limiting, auditoría segura, revocación y revisión de salida.                    |
 | [Registro de decisiones](docs/adr/README.md)                                       | Decisiones arquitectónicas y su estado.                                             |
 
 ## Decisiones iniciales
@@ -70,17 +71,19 @@ Fase 2 seleccionó Keycloak autohospedado como proveedor OIDC, implementó su
 runtime reproducible, verificó la publicación mínima en
 `auth.kontora-pos.store`. Discovery, JWKS e inicio de login están disponibles;
 la administración, el realm `master`, health y métricas permanecen fuera de la
-frontera pública. El incremento 2.4 integra el login OIDC en Tauri, protege el
+frontera pública. El incremento 4 integra el login OIDC en Tauri, protege el
 refresh token con el almacén del sistema operativo y añade una cuenta beta y un
 tema de acceso. El login, callback y perfil fueron comprobados manualmente; la
 corrección responsive del formulario web fue aprobada visualmente por el
-propietario. El alta de otros usuarios es manual durante la beta y
-la invitación automatizada queda documentada como pendiente.
-La API todavía no valida JWT.
-Durante esta fase, las ramas integradas se
-conservarán congeladas localmente y en `origin`. GitHub Actions permanece
-aplazado y la puerta de calidad manual sigue siendo obligatoria. Aún no se
-incluyen trabajos, `yt-dlp` ni FFmpeg.
+propietario. El incremento 5 valida JWT en la API, resuelve una identidad
+interna estable y aplica una política reutilizable de propiedad. El incremento
+6 añade rate limiting por origen e identidad y eventos de auditoría seguros;
+su verificación automatizada está aprobada y solo resta la prueba manual de
+revocación. El alta de otros usuarios es manual durante la beta y la invitación
+automatizada queda documentada como pendiente. Durante esta fase, las ramas
+integradas se conservarán congeladas localmente y en `origin`. GitHub Actions
+permanece aplazado y la puerta de calidad manual sigue siendo obligatoria. Aún
+no se incluyen trabajos, `yt-dlp` ni FFmpeg.
 
 ## Verificación de identidad privada
 
